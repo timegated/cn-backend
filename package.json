@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.ts",
-    "dist": "node dist/index.js",
+    "start": "rimraf dist && tsc && node dist/index.js",
     "build": "rimraf dist && tsc",
     "ts.check": "tsc --project tsconfig.json",
     "add-build": "git add dist"
@@ -26,10 +25,5 @@
     "pre-commit": "^1.2.2",
     "rimraf": "^4.3.0",
     "typescript": "^4.9.5"
-  },
-  "pre-commit": [
-    "ts.check",
-    "build",
-    "add-build"
-  ]
+  }
 }

@@ -7,7 +7,7 @@ router.get("/", async (req: express.Request, res: express.Response) => {
     try {
       const { prompt, modelChoice, maxTokens } = req.query;
       const promptText = prompt ? String(prompt) : "";
-      const model = modelChoice ? String(modelChoice) : "text-davinci-002";
+      const model = modelChoice ? String(modelChoice) : "gpt-3.5-turbo-0301";
       const maximumTokens = maxTokens ? Number(maxTokens) : 1000;
       if (!prompt && !maxTokens) {
         res.status(400).send("Prompt and maxTokens are required for request");
@@ -29,7 +29,7 @@ router.get("/multiple", async (req: express.Request, res: express.Response) => {
     try {
       const { prompt, modelChoice, maxTokens } = req.query;
       const promptText = prompt ? String(prompt) : "";
-      const model = modelChoice ? String(modelChoice) : "text-davinci-002";
+      const model = modelChoice ? String(modelChoice) : "gpt-3.5-turbo-0301";
       const maximumTokens = maxTokens ? Number(maxTokens) : 1000;
       if (!prompt && !maxTokens) {
         res.status(400).send("Prompt and maxTokens are required for request");
