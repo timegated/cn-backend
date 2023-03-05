@@ -2,7 +2,7 @@ import express from "express";
 import * as routes from './routes';
 
 const app = express();
-const PORT = 3002;
+const PORT = process.env.PORT || 3002;
 
 export const handlePreFlight = async (
   req: express.Request,
