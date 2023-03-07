@@ -9,3 +9,11 @@ import * as engines from './engines';
 router.use('/answer', answers.router);
 router.use('/stream', stream.router);
 router.use('/engines', engines.router);
+
+router.use('/', async (req: express.Request, res: express.Response) => {
+  try {
+    res.status(200).send('Welcome to the Chat Node Backend');
+  } catch (error) {
+    console.error(error);
+  }
+})

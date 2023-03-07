@@ -1,5 +1,6 @@
 import express from "express";
 import * as routes from './routes';
+import cors from 'cors';
 
 const app = express();
 const PORT = process.env.PORT || 3002;
@@ -18,6 +19,7 @@ export const handlePreFlight = async (
   next();
 };
 
+app.use(cors());
 app.use(handlePreFlight);
 app.use('/', routes.router);
 

@@ -49,7 +49,7 @@ export async function promptResponseMultiple(
     completion.data.choices.forEach((choice: any) => {
       text.push(choice.text);
     });
-    return text.join("");
+    return completion;
   } catch (error: any) {
     if (error.response) {
       console.log(error.response.status);
