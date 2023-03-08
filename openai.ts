@@ -43,13 +43,14 @@ export async function promptResponseMultiple(
       model: model,
       prompt: `${promptText}`,
       max_tokens: maxTokens,
-      n: 10
+      n: 10,
+      stream: false
     });
     const text: string[] = [];
     completion.data.choices.forEach((choice: any) => {
-      text.push(choice.text);
+      text.push(choice);
     });
-    return completion;
+    return text;
   } catch (error: any) {
     if (error.response) {
       console.log(error.response.status);

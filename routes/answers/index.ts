@@ -40,7 +40,7 @@ router.get("/multiple", async (req: express.Request, res: express.Response) => {
       }
       const result = await promptResponseMultiple(promptText, model, maximumTokens);
   
-      res.status(200).send(result);
+      res.status(200).json(result);
     } catch (error) {
       res.status(400).send("Bad Request");
       throw error;
