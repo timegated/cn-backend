@@ -21,7 +21,6 @@ export async function promptResponse(
       n: 10,
       temperature: 0.8
     });
-    console.log(completion.data.choices);
     return completion.data.choices[0].text;
   } catch (error: any) {
     if (error.response) {
@@ -44,7 +43,6 @@ export async function promptResponseMultiple(
       prompt: `${promptText}`,
       max_tokens: maxTokens,
       n: 10,
-      stream: false
     });
     const text: string[] = [];
     completion.data.choices.forEach((choice: any) => {
