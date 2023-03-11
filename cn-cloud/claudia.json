@@ -1,0 +1,11 @@
+{
+  "lambda": {
+    "role": "cn-cloud-executor",
+    "name": "cn-cloud",
+    "region": "us-east-1"
+  },
+  "api": {
+    "id": "4gl8bgj6sa",
+    "module": "api"
+  }
+}
