@@ -1,12 +1,13 @@
 import { Configuration, OpenAIApi } from "openai";
-import {Readable, Transform, finished} from 'stream';
+import {Readable } from 'stream';
 
 require('dotenv').config()
 
 const config = new Configuration({
   apiKey: process.env.GPT_SECRET,
 });
-const api = new OpenAIApi(config);
+
+export const api = new OpenAIApi(config);
 
 export async function promptResponse(
   promptText: string,
@@ -18,8 +19,8 @@ export async function promptResponse(
       model: model,
       prompt: `${promptText}`,
       max_tokens: maxTokens,
-      n: 10,
-      temperature: 0.8
+      n: 1,
+      temperature: 0.1,
     });
     return completion.data.choices[0].text;
   } catch (error: any) {
@@ -101,7 +102,9 @@ export async function promptResponseStream(
 export async function listEngines () {
   try {
     const res = await api.listModels({
-      responseType: "json",
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
     return res.data;
   } catch (error) {
