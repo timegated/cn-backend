@@ -11,6 +11,23 @@ const nestedSelector = (promptText: string) => `that grabs any content that is n
 const elementSelector = (promptText: string) => `that grabs the text content of any html element with name ${promptText}`;
 const imgSelector = () => `that selects image urls and returns the data as a string`;
 
+const callMap = new Map([['id', idSelector], ['class', classSelector], ['attr', attrSelector], ['nested', nestedSelector], ['img', imgSelector], ['element', elementSelector]]);
+
+const callFunctionFor = (key: string, prompt: string) => {
+  const funcCall = callMap.get(key);
+
+  if (funcCall) {
+    return funcCall(prompt);
+  }
+
+  return classSelector(prompt);
+};
+
+const template = (key: string, prompt: string) => {
+  return `You an experienced Javascript developer with experience using Jquery.
+  Selector ${callFunctionFor(key, prompt)}`
+};
+
 router.get("/", async (req: express.Request, res: express.Response) => {
   try {
     const tokenLimit = 4097
@@ -18,29 +35,11 @@ router.get("/", async (req: express.Request, res: express.Response) => {
     const prompt = req.query.prompt ? String(req.query.prompt) : '';
     const selectKey = req.query.selectKey ? String(req.query.selectKey) : 'class';
 
-
-    const callMap = new Map([['id', idSelector], ['class', classSelector], ['attr', attrSelector], ['nested', nestedSelector], ['img', imgSelector], ['element', elementSelector]]);
-
-    const callFunctionFor = (key: string) => {
-      const funcCall = callMap.get(key);
-
-      if (funcCall) {
-        return funcCall(prompt);
-      }
-
-      return classSelector(prompt);
-    };
-
-    const template = () => {
-      return `You an experienced Javascript developer with experience using Jquery.
-      Selector ${callFunctionFor(selectKey)}`
-    };
-
-    const maxTokens = Math.round(tokenLimit - template().length / 2.5);
+    const maxTokens = Math.round(tokenLimit - template(selectKey, prompt).length / 2.5);
 
     const jquery = await api.createCompletion({
       model: 'text-davinci-003',
-      prompt: template(),
+      prompt: template(selectKey, prompt),
       n: 1,
       temperature: 0,
       max_tokens: maxTokens,
