@@ -119,6 +119,7 @@ Spec: {
   "js modules": "jQuery, Three.js",
   "images": "the article should includes at least 5 or 6 pictures to illustration the diversity in asteroids compositions and shapes"
 }`;
+
 const Tasks = {
   "layout": "An encyclopedia-like layout, similar to scientific articles or Wikipedia. Images (if any) should be including within the body.",
   "art direction": "The design should be sober and elegant, without any emoji, using a serif font to make it looks like a book or printed article. Background should be white, foreground colors should be in shades of grey.",
@@ -126,5 +127,6 @@ const Tasks = {
   "references": "The article should includes scientific or book references at the end, like for a scientific article",
   "js modules": "jQuery, Three.js",
   "images": "the article should includes at least 5 or 6 pictures to illustration the diversity in asteroids compositions and shapes"
-}
+};
+
 console.log(getInstructions(Tasks));

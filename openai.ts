@@ -21,6 +21,7 @@ export async function promptResponse(
       max_tokens: maxTokens,
       n: 1,
       temperature: 0.1,
+      stream: true,
     });
     return completion.data.choices[0].text;
   } catch (error: any) {
