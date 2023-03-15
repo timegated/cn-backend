@@ -1,7 +1,7 @@
 
 export const parseStreamData = (lines: string[]) => {
     for (const line of lines) {
-      const message = line.replace(/^data: /, "");
+      const message = line.replace(/^data: /g, "");
       if (message === "[DONE]") {
         return; // Stream finished
       }
