@@ -99,7 +99,7 @@ export async function promptResponseStream(
     throw error;
   }
 }
-
+/** ENGINES */
 export async function listEngines () {
   try {
     const res = await api.listModels({
@@ -108,11 +108,17 @@ export async function listEngines () {
       }
     });
     return res.data;
-  } catch (error) {
-    console.error(error);
+  } catch (error: any) {
+    if (error.response) {
+      console.log(error.response.status);
+      console.log(error.response.data);
+    } else {
+      console.log(error.message);
+    }
   }
 }
 
+/** FILES */
 export async function uploadFile(
   file: any,
   purpose: string,
@@ -120,15 +126,44 @@ export async function uploadFile(
   try {
     // Implement file upload
     const createFile = await api.createFile(file, purpose);
-    return createFile;
-  } catch (error) {
-    // catch errors
-    console.error(error);
-    throw error;
+    return createFile.data;
+  } catch (error: any) {
+    if (error.response) {
+      console.log(error.response.status);
+      console.log(error.response.data);
+    } else {
+      console.log(error.message);
+    }
   }
 }
 
+export async function listFiles() {
+  try {
+    const listFiles = await api.listFiles();
+    return listFiles.data;
+  } catch (error: any) {
+    if (error.response) {
+      console.log(error.response.status);
+      console.log(error.response.data);
+    } else {
+      console.log(error.message);
+    }
+  }
+}
 
+export async function singleFile (id: string) {
+  try {
+    const singleFile = await api.retrieveFile(id);
+    return singleFile.data;
+  } catch (error: any) {
+    if (error.response) {
+      console.log(error.response.status);
+      console.log(error.response.data);
+    } else {
+      console.log(error.message);
+    }
+  }
+}
 
 export async function promptCreateFineTune() {
   try {
@@ -137,7 +172,12 @@ export async function promptCreateFineTune() {
         training_file: ''
       }
     );
-  } catch (error) {
-    
+  } catch (error: any) {
+    if (error.response) {
+      console.log(error.response.status);
+      console.log(error.response.data);
+    } else {
+      console.log(error.message);
+    }
   }
 }
