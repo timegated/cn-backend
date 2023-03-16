@@ -113,16 +113,31 @@ export async function listEngines () {
   }
 }
 
-export async function promptResponseFile(
+export async function uploadFile(
   file: any,
-  prefixChoice: number,
-  model: string,
-  maxTokens: number
+  purpose: string,
 ) {
   try {
     // Implement file upload
+    const createFile = await api.createFile(file, purpose);
+    return createFile;
   } catch (error) {
     // catch errors
+    console.error(error);
     throw error;
+  }
+}
+
+
+
+export async function promptCreateFineTune() {
+  try {
+    const fineTune = await api.createFineTune(
+      {
+        training_file: ''
+      }
+    );
+  } catch (error) {
+    
   }
 }
