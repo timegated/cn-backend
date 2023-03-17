@@ -1,5 +1,5 @@
 import { Configuration, OpenAIApi } from "openai";
-import {Readable } from 'stream';
+import { Readable } from 'stream';
 
 require('dotenv').config()
 
@@ -8,6 +8,22 @@ const config = new Configuration({
 });
 
 export const api = new OpenAIApi(config);
+
+interface FineTuneParams {
+  id: string;
+  validationFile?: string | null;
+  model?: string | null;
+  nEpochs?: number | null;
+  batchSize?: number | null;
+  learningRateMultiplier?: number | null;
+  promptLossWeight?: number | null;
+  computeClassificationMetrics?: boolean | null;
+  classificationNClasses?: number | null;
+  classificationPositiveClass?: string | null;
+  classificationBetas?: number[] | null;
+  suffix?: string | null;
+}
+
 
 export async function promptResponse(
   promptText: string,
@@ -78,7 +94,7 @@ export async function promptResponseStream(
       },
       { responseType: "stream" }
     );
-    
+
     const stream = Readable.from(res.data as any);
 
     return stream;
@@ -100,7 +116,7 @@ export async function promptResponseStream(
   }
 }
 /** ENGINES */
-export async function listEngines () {
+export async function listEngines() {
   try {
     const res = await api.listModels({
       headers: {
@@ -151,7 +167,7 @@ export async function listFiles() {
   }
 }
 
-export async function singleFile (id: string) {
+export async function singleFile(id: string) {
   try {
     const singleFile = await api.retrieveFile(id);
     return singleFile.data;
@@ -165,13 +181,41 @@ export async function singleFile (id: string) {
   }
 }
 
-export async function promptCreateFineTune() {
+export async function deleteFile(id: string) {
   try {
-    const fineTune = await api.createFineTune(
-      {
-        training_file: ''
-      }
-    );
+    const deleteFile = await api.deleteFile(id);
+    return deleteFile.data;
+  } catch (error: any) {
+    if (error.response) {
+      console.log(error.response.status);
+      console.log(error.response.data);
+    } else {
+      console.log(error.message);
+    }
+  }
+}
+
+/** FINE TUNE */
+export async function createFinetune(params: FineTuneParams) {
+  try {
+    const fineTune = await api.createFineTune({
+      training_file: params.id,
+    });
+    return fineTune.data;
+  } catch (error: any) {
+    if (error.response) {
+      console.log(error.response.status);
+      console.log(error.response.data);
+    } else {
+      console.log(error.message);
+    }
+  }
+}
+
+export async function retrieveFineTune(id: string) {
+  try {
+    const retrieve = await api.retrieveFineTune(id);
+    return retrieve.data;
   } catch (error: any) {
     if (error.response) {
       console.log(error.response.status);

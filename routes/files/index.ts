@@ -1,7 +1,7 @@
 import * as express from 'express';
 import multer from 'multer';
 import fs from 'fs';
-import { uploadFile, listFiles, singleFile } from '../../openai';
+import { uploadFile, listFiles, singleFile, deleteFile } from '../../openai';
 
 export const router = express.Router();
 const storage = multer.diskStorage({
@@ -36,7 +36,7 @@ router.post('/upload', upload.single('file'), async (req: express.Request, res: 
   } catch (error) {
     throw error;
   }
-})
+});
 
 
 router.get('/list', async (req: express.Request, res: express.Response) => {
@@ -46,7 +46,7 @@ router.get('/list', async (req: express.Request, res: express.Response) => {
   } catch (error) {
     throw error;
   }
-})
+});
 
 router.get('/single', async (req: express.Request, res: express.Response) => {
   try {
@@ -57,6 +57,19 @@ router.get('/single', async (req: express.Request, res: express.Response) => {
       return;
     }
     res.status(400).send('File Id required.');
+  } catch (error) {
+    throw error;
+  }
+});
+
+router.delete('/single/:id', async (req: express.Request, res: express.Response) => {
+  try {
+    const { id } = req.params;
+    if (id) {
+      const deleted = await deleteFile(id);
+      res.status(200).send({ ...deleted });
+    }
+    res.status(400).send('File Id required');
   } catch (error) {
     throw error;
   }
