@@ -25,6 +25,7 @@ interface FineTuneParams {
 }
 
 
+/** COMPLETIONS */
 export async function promptResponse(
   promptText: string,
   model: string,
@@ -94,7 +95,7 @@ export async function promptResponseStream(
       },
       { responseType: "stream" }
     );
-
+    console.log(res.data.choices);
     const stream = Readable.from(res.data as any);
 
     return stream;
@@ -115,6 +116,47 @@ export async function promptResponseStream(
     throw error;
   }
 }
+
+export async function promptResponseStreamChat(
+  prompt: string,
+  model: string,
+  maxTokens: number
+) {
+  try {
+    const res = await api.createChatCompletion(
+      {
+        model: model,
+        messages: [{
+          role: 'user',
+          content: `${prompt}`
+        }],
+        max_tokens: maxTokens,
+        stream: true,
+      },
+      { responseType: 'stream' }
+    );
+    console.log(model);
+    const stream = Readable.from(res.data as any);
+    return stream;
+  } catch (error: any) {
+    if (error.response?.status) {
+      error.response.data.on("data", (data: Buffer) => {
+        const message = data.toString();
+        try {
+          const parsed = JSON.parse(message);
+          console.error("An error occurred during OpenAI request: ", parsed);
+        } catch (error) {
+          console.error("An error occurred during OpenAI request: ", message);
+        }
+      });
+    } else {
+      console.error("An error occurred during OpenAI request", error);
+    }
+    throw error;
+  }
+}
+
+
 /** ENGINES */
 export async function listEngines() {
   try {
@@ -140,7 +182,6 @@ export async function uploadFile(
   purpose: string,
 ) {
   try {
-    // Implement file upload
     const createFile = await api.createFile(file, purpose);
     return createFile.data;
   } catch (error: any) {
