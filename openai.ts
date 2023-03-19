@@ -135,7 +135,6 @@ export async function promptResponseStreamChat(
       },
       { responseType: 'stream' }
     );
-    console.log(model);
     const stream = Readable.from(res.data as any);
     return stream;
   } catch (error: any) {

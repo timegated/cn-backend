@@ -28,7 +28,6 @@ export const streamOn = (result: any, chatCompletion: boolean) => {
     const delay = new Transform({
       objectMode: false,
       transform(chunk, enc, cb) {
-        console.log(chunk);
         const parseChunk = parseStreamData(chatCompletion, extractLines(chunk));
         setTimeout(cb, 50, null, parseChunk)
       },
