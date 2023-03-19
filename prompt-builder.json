@@ -1,0 +1,343 @@
+{
+  "modifiers": {
+    "rootMod": [
+      {
+        "mod": "generate",
+        "targets": [
+          {
+            "target": "question"
+          },
+          {
+            "target": "story"
+          },
+          {
+            "target": "sentence"
+          },
+          {
+            "target": "list"
+          }
+        ]
+      },
+      {
+        "mod": "suggest",
+        "targets": [
+          {
+            "target": "title"
+          },
+          {
+            "target": "strategy"
+          },
+          {
+            "target": "idea"
+          },
+          {
+            "target": "way"
+          }
+        ]
+      },
+      {
+        "mod": "design",
+        "targets": [
+          {
+            "target": "experiment"
+          },
+          {
+            "target": "game"
+          },
+          {
+            "target": "algorithm"
+          },
+          {
+            "target": "logo"
+          }
+        ]
+      },
+      {
+        "mod": "construct",
+        "targets": [
+          {
+            "target": "timeline"
+          },
+          {
+            "target": "argument"
+          },
+          {
+            "target": "query"
+          },
+          {
+            "target": "sentence"
+          }
+        ]
+      },
+      {
+        "mod": "make",
+        "targets": [
+          {
+            "target": "suggestion"
+          },
+          {
+            "target": "sentence"
+          },
+          {
+            "target": "prediction"
+          },
+          {
+            "target": "list"
+          }
+        ]
+      },
+      {
+        "mod": "identify",
+        "targets": [
+          {
+            "target": "difference"
+          },
+          {
+            "target": "theme"
+          },
+          {
+            "target": "subject"
+          },
+          {
+            "target": "type"
+          }
+        ]
+      },
+      {
+        "mod": "calculate",
+        "targets": [
+          {
+            "target": "average"
+          },
+          {
+            "target": "cost"
+          },
+          {
+            "target": "sum"
+          }
+        ]
+      },
+      {
+        "mod": "convert",
+        "targets": [
+          {
+            "target": "temperature"
+          },
+          {
+            "target": "text"
+          },
+          {
+            "target": "sentence"
+          },
+          {
+            "target": "number"
+          }
+        ]
+      },
+      {
+        "mod": "find",
+        "targets": [
+          {
+            "target": "area"
+          },
+          {
+            "target": "synonym"
+          },
+          {
+            "target": "number"
+          },
+          {
+            "target": "word"
+          }
+        ]
+      },
+      {
+        "mod": "name",
+        "targets": [
+          {
+            "target": "element"
+          },
+          {
+            "target": "benefit"
+          },
+          {
+            "target": "country"
+          },
+          {
+            "target": "type"
+          }
+        ]
+      },
+      {
+        "mod": "provide",
+        "targets": [
+          {
+            "target": "summary"
+          },
+          {
+            "target": "solution"
+          },
+          {
+            "target": "list"
+          },
+          {
+            "target": "example"
+          }
+        ]
+      },
+      {
+        "mod": "summarize",
+        "targets": [
+          {
+            "target": "article"
+          },
+          {
+            "target": "text"
+          },
+          {
+            "target": "point"
+          },
+          {
+            "target": "paragraph"
+          }
+        ]
+      },
+      {
+        "mod": "classify",
+        "targets": [
+          {
+            "target": "animal"
+          },
+          {
+            "target": "word"
+          },
+          {
+            "target": "item"
+          },
+          {
+            "target": "sentence"
+          }
+        ]
+      },
+      {
+        "mod": "describe",
+        "targets": [
+          {
+            "target": "benefit"
+          },
+          {
+            "target": "impact"
+          },
+          {
+            "target": "difference"
+          },
+          {
+            "target": "process"
+          }
+        ]
+      },
+      {
+        "mod": "edit",
+        "targets": [
+          {
+            "target": "paragraph"
+          },
+          {
+            "target": "article"
+          },
+          {
+            "target": "text"
+          },
+          {
+            "target": "sentence"
+          }
+        ]
+      },
+      {
+        "mod": "give",
+        "targets": [
+          {
+            "target": "example"
+          },
+          {
+            "target": "description"
+          },
+          {
+            "target": "list"
+          },
+          {
+            "target": "title"
+          }
+        ]
+      },
+      {
+        "mod": "explain",
+        "targets": [
+          {
+            "target": "concept"
+          },
+          {
+            "target": "difference"
+          },
+          {
+            "target": "meaning"
+          },
+          {
+            "target": "purpose"
+          }
+        ]
+      },
+      {
+        "mod": "write",
+        "targets": [
+          {
+            "target": "story"
+          },
+          {
+            "target": "sentence"
+          },
+          {
+            "target": "function"
+          },
+          {
+            "target": "description"
+          }
+        ]
+      },
+      {
+        "mod": "create",
+        "targets": [
+          {
+            "target": "list"
+          },
+          {
+            "target": "poem"
+          },
+          {
+            "target": "sentence"
+          },
+          {
+            "target": "story"
+          }
+        ]
+      },
+      {
+        "mod": "rewrite",
+        "targets": [
+          {
+            "target": "sentence"
+          },
+          {
+            "target": "statement"
+          },
+          {
+            "target": "paragraph"
+          },
+          {
+            "target": "phrase"
+          }
+        ]
+      }
+    ]
+  }
+}
