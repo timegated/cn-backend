@@ -1,11 +1,12 @@
 import { Readable, Transform } from "stream";
 
 
-const extractLines = (data: Buffer): string[] =>
-data
-  .toString()
-  .split("\n")
-  .filter((line: string) => line.trim() !== "");
+const extractLines = (data: Buffer): string[] => {
+  return data
+    .toString()
+    .split("\n")
+    .filter((line: string) => line.trim() !== "");
+}
 
 const parseStreamData = (chatCompletion: boolean, lines: string[]) => {
   for (const line of lines) {
