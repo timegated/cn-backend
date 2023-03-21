@@ -10,7 +10,6 @@ const extractLines = (data: Buffer): string[] => {
 
 const parseStreamData = (chatCompletion: boolean, lines: string[]) => {
   for (const line of lines) {
-    console.log(line);
     const message = line.replace(/^data: /g, "");
     if (message === "[DONE]") {
       return; // Stream finished
