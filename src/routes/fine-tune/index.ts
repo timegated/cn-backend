@@ -5,7 +5,7 @@ export const router = express.Router();
 
 router.post('/', async (req: express.Request, res: express.Response) => {
   try {
-    const {id} = req.body;
+    const { id } = req.body;
     if (id) {
       const fineTune = await createFinetune({
         id

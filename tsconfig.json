@@ -7,6 +7,8 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
-    "rootDir": "./"
-  }
+    "rootDir": "./",
+  },
+  "include": ["src/**/*"],
+  "exclude": ["cn-cloud/**/*", "deterministic_sentence_generation/**/*, prompt.js, jquery.js, prompts.ts"]
 }

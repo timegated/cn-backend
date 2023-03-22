@@ -19,7 +19,7 @@ router.get('/', async (req: express.Request, res: express.Response) => {
 
 router.get('/prompts', async (req: express.Request, res: express.Response) => {
   try {
-    const {topicid, type} = req.query;
+    const { topicid, type } = req.query;
     if (topicid) {
       const promptType = type === 'prompts' ? 'prompts' : 'roles';
       const colName = type === 'prompts' ? 'prompttext' : 'roletext';
