@@ -7,6 +7,10 @@ export const router = express.Router();
 router.get(
   "/",
   async (req: express.Request, res: express.Response, next) => {
+    res.set({
+      'Content-Type': 'text/plain',
+      'Transfer-Encoding': 'chunked'
+    });
     try {
       const { prompt, modelChoice, maxTokens } = req.query;
       const promptText = prompt ? String(prompt) : "";
@@ -32,6 +36,10 @@ router.get(
 
 
 router.get('/chat', async (req: express.Request, res: express.Response) => {
+  res.set({
+    'Content-Type': 'text/plain',
+    'Transfer-Encoding': 'chunked'
+  });
   try {
     const { prompt, modelChoice, maxTokens } = req.query;
     const promptText = prompt ? String(prompt) : "";
