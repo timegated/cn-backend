@@ -23,7 +23,7 @@ export const client = new Client({
 client.connect();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = 3002;
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));

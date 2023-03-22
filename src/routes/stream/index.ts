@@ -8,7 +8,7 @@ router.get(
   "/",
   async (req: express.Request, res: express.Response, next) => {
     res.set({
-      'Content-Type': 'text/plain',
+      'Content-Type': 'text/stream',
       'Transfer-Encoding': 'chunked'
     });
     try {
@@ -37,7 +37,7 @@ router.get(
 
 router.get('/chat', async (req: express.Request, res: express.Response) => {
   res.set({
-    'Content-Type': 'text/plain',
+    'Content-Type': 'text/stream',
     'Transfer-Encoding': 'chunked'
   });
   try {
