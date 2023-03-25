@@ -1,0 +1,210 @@
+openapi: 3.0.0
+info:
+  title: AI Model API
+  description: An API for generating AI model responses.
+  version: 1.0.0
+servers:
+- url: /
+paths:
+  /stream:
+    get:
+      summary: Generates AI model response
+      description: This route generates an AI model response using the given prompt, model choice, and maximum tokens.
+      parameters:
+      - name: prompt
+        in: query
+        description: The prompt to generate the AI model response.
+        required: true
+        schema:
+          type: string
+      - name: modelChoice
+        in: query
+        description: The AI model choice (default is 'text-davinci-003').
+        required: false
+        schema:
+          type: string
+      - name: maxTokens
+        in: query
+        description: The maximum number of tokens for the generated response (default is 1000, cannot exceed 4096).
+        required: false
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Successful generation of AI model response.
+          content:
+            text/stream:
+              schema:
+                type: string
+        '400':
+          description: Bad request, invalid input provided or exceeded the allowed token limit.
+          content:
+            text/plain:
+              schema:
+                type: string
+  /stream/chat:
+    get:
+      summary: Generates chat model response
+      description: This route generates a chat model response using the given prompt, model choice, and maximum tokens.
+      parameters:
+      - name: prompt
+        in: query
+        description: The prompt to generate the chat model response.
+        required: true
+        schema:
+          type: string
+      - name: modelChoice
+        in: query
+        description: The chat model choice (default is 'gpt-3.5-turbo').
+        required: false
+        schema:
+          type: string
+      - name: maxTokens
+        in: query
+        description: The maximum number of tokens for the generated response (default is 1000, cannot exceed 4096).
+        required: false
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Successful generation of chat model response.
+          content:
+            text/stream:
+              schema:
+                type: string
+        '400':
+          description: Bad request, invalid input provided or exceeded the allowed token limit.
+          content:
+            text/plain:
+              schema:
+                type: string
+  /engines:
+    get:
+      summary: List available engines
+      description: This route retrieves the list of available engines.
+      responses:
+        '200':
+          description: Successful retrieval of available engines.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: Engine ID.
+                    object:
+                      type: string
+                      description: Object type (e.g., 'engine').
+                    created:
+                      type: integer
+                      format: int64
+                      description: Engine creation timestamp.
+                    max_tokens:
+                      type: integer
+                      description: Maximum number of tokens the engine can process in one API call.
+                    model:
+                      type: string
+                      description: Model name.
+                    ready:
+                      type: boolean
+                      description: Indicates if the engine is ready for use.
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error.
+          content:
+            text/plain:
+              schema:
+                type: string
+  /files/upload:
+    post:
+      summary: Upload a file
+      description: This route uploads a file for a specific purpose.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The file to be uploaded.
+      responses:
+        '201':
+          description: Successfully uploaded file.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request, file and purpose are both required.
+          content:
+            text/plain:
+              schema:
+                type: string
+  /files/list:
+    get:
+      summary: List all files
+      description: This route retrieves a list of all files.
+      responses:
+        '200':
+          description: Successfully retrieved list of files.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+  /files/single:
+    get:
+      summary: Get single file
+      description: This route retrieves a single file based on the provided file ID.
+      parameters:
+        - name: fileId
+          in: query
+          description: The ID of the file to be retrieved.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved the file.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request, file ID is required.
+          content:
+            text/plain:
+              schema:
+                type: string
+  /files/single/{id}:
+    delete:
+      summary: Delete a single file
+      description: This route deletes a single file based on the provided file ID.
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the file to be deleted.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully deleted the file.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request, file ID is required.
+          content:
+            text/plain:
+              schema:
+                type: string
