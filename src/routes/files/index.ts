@@ -18,7 +18,7 @@ const upload = multer({ storage });
 
 router.get('/', async (req: express.Request, res: express.Response) => {
   try {
-    res.status(200).send('Welcome to the Files Routes');
+    res.redirect('/api-docs/#/default/get_list');
   } catch (error) {
     throw error;
   }
@@ -30,8 +30,9 @@ router.post('/upload', upload.single('file'), async (req: express.Request, res: 
       const readFile = fs.createReadStream(req.file.path);
       const createFile = await uploadFile(readFile, 'fine-tune');
       res.status(201).send({ ...createFile });
+      return;
     } else {
-      res.status(400).send('Error: file and purpose are both required');
+      res.status(400).send('Error: file and purpose are both required').end();
     }
   } catch (error) {
     throw error;
@@ -42,7 +43,7 @@ router.post('/upload', upload.single('file'), async (req: express.Request, res: 
 router.get('/list', async (req: express.Request, res: express.Response) => {
   try {
     const files = await listFiles();
-    res.status(200).send(files);
+    res.status(200).send(files).end();
   } catch (error) {
     throw error;
   }
@@ -56,7 +57,7 @@ router.get('/single', async (req: express.Request, res: express.Response) => {
       res.status(200).send(file);
       return;
     }
-    res.status(400).send('File Id required.');
+    res.status(400).send('File Id required.').end();
   } catch (error) {
     throw error;
   }
@@ -68,8 +69,9 @@ router.delete('/single/:id', async (req: express.Request, res: express.Response)
     if (id) {
       const deleted = await deleteFile(id);
       res.status(200).send({ ...deleted });
+      return
     }
-    res.status(400).send('File Id required');
+    res.status(400).send('File Id required').end();
   } catch (error) {
     throw error;
   }

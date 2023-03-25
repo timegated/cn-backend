@@ -1,5 +1,6 @@
 import * as express from 'express';
 
+
 export const router = express.Router();
 
 import * as answers from './answers';
@@ -19,5 +20,5 @@ router.use('/fine-tune', fineTune.router);
 router.use('/topics', prompts.router);
 
 router.get('/', async (req: express.Request, res: express.Response) => {
-  res.status(200).send('Welcome to the chat node api');
+  res.redirect('/api-docs')
 });
