@@ -29,45 +29,23 @@ interface FineTuneParams {
 export async function promptResponse(
   promptText: string,
   model: string,
-  maxTokens: number
-) {
-  try {
-    const completion = await api.createCompletion({
-      model: model,
-      prompt: `${promptText}`,
-      max_tokens: maxTokens,
-      n: 1,
-      temperature: 0.1,
-      stream: true,
-    });
-    return completion.data.choices[0].text;
-  } catch (error: any) {
-    if (error.response) {
-      console.log(error.response.status);
-      console.log(error.response.data);
-    } else {
-      console.log(error.message);
-    }
-  }
-}
-
-export async function promptResponseMultiple(
-  promptText: string,
-  model: string,
   maxTokens: number,
+  numResponses: number,
+  temperature: number,
+  responseAs: string
 ) {
   try {
     const completion = await api.createCompletion({
       model: model,
-      prompt: `${promptText}`,
+      prompt: `${promptText}, return the response as ${responseAs}`,
       max_tokens: maxTokens,
-      n: 1,
+      n: numResponses,
+      temperature: temperature,
     });
-    const text: string[] = [];
-    completion.data.choices.forEach((choice: any) => {
-      text.push(choice);
+    if (numResponses === 1) return completion.data.choices[0].text;
+    return completion.data.choices.map((choice: any) => {
+      return choice.text;
     });
-    return text;
   } catch (error: any) {
     if (error.response) {
       console.log(error.response.status);
@@ -76,7 +54,6 @@ export async function promptResponseMultiple(
       console.log(error.message);
     }
   }
-
 }
 
 export async function promptResponseStream(
