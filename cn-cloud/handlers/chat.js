@@ -1,9 +1,4 @@
-const { Configuration, OpenAIApi } = require('openai');
-const config = new Configuration({
-  apiKey: process.env.GPT_SECRET,
-});
-
-const chatgpt = new OpenAIApi(config);
+import chatgpt from "../singleton/openai-instance";
 
 const chat = () => {
     return chatgpt.listModels().then((result) => {

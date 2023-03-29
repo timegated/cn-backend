@@ -1,6 +1,7 @@
 import { Readable, Transform } from "stream";
 
 
+
 const extractLines = (data: Buffer): string[] => {
   return data
     .toString()
@@ -16,8 +17,10 @@ const parseStreamData = (chatCompletion: boolean, lines: string[]) => {
     }
     try {
       const parsed = JSON.parse(message);
-
-      return chatCompletion ? parsed.choices[0].delta.content : parsed.choices[0].text;
+      const choices = parsed.choices.map((choice: any) => {
+        return chatCompletion ? choice.delta.content : choice.text;
+      });
+      return choices.join(' ');
     } catch (error) {
       console.error("Could not JSON parse stream message", message, error);
     }

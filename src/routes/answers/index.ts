@@ -1,5 +1,6 @@
 import * as express from 'express';
 import { promptResponse } from '../../openai';
+import {Readable} from 'stream';
 
 export const router = express.Router();
 
@@ -21,8 +22,15 @@ router.get("/", async (req: express.Request, res: express.Response) => {
       res.status(400).send("Max Tokens cannot exceed 4096")
     }
     const result = await promptResponse(promptText, model, maximumTokens, num, temp, as);
-
-    res.status(200).send(result);
+    if (result) {
+      const streamResult = Readable.from(result)
+      streamResult.pipe(res).on('end', () => {
+        console.log('stream finished');
+      });
+    } else {
+      res.status(500).send('Something went wrong');
+      return;
+    }
   } catch (error) {
     res.status(400).send("Bad Request");
     throw error;

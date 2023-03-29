@@ -72,7 +72,6 @@ export async function promptResponseStream(
       },
       { responseType: "stream" }
     );
-    console.log(res.data.choices);
     const stream = Readable.from(res.data as any);
 
     return stream;
@@ -108,7 +107,11 @@ export async function promptResponseStreamChat(
           content: `${prompt}`
         }],
         max_tokens: maxTokens,
+        n: 1,
         stream: true,
+        presence_penalty: 1,
+        temperature: 0,
+        frequency_penalty: 1,
       },
       { responseType: 'stream' }
     );
