@@ -1,28 +1,32 @@
+// @ts-nocheck
 import * as express from 'express';
-import { BayesClassifier, WordNet } from 'natural';
+import Markov from 'js-markov';
+import { WordNet } from 'natural';
+import fs from 'fs';
+import path from 'path';
 
-
-const classifier = new BayesClassifier();
 const wordNet = new WordNet();
+const markovChain = new Markov();
+
 export const router = express.Router();
 
-router.get('/', async (req: express.Request, res: express.Response) => {
-const training: string[][] = [];
-
-for (const data of training) {
-  classifier.addDocument(data[0], data[1]);
-}
-
-classifier.train();
-
+router.get('/', trainModel, async (req: express.Request, res: express.Response) => {
   try {
-    const { userText } = req.query;
+    const { topic } = req.query;
 
-    if (userText && userText !== '') {
-      const result = classifier.classify(String(userText));
+    if (topic && topic !== '') {
+      console.log('building sentence');
+      const questions = [];
 
-      res.status(200).json(result);
-      return;
+      for (let i = 0; i < 20; i++) {
+        questions.push(markovChain.generateRandom(100));
+      }
+      if (questions.length === 20) {
+        res.status(200).json(questions);
+        return;
+      } else {
+        res.status(200).send({});
+      }
     }
     res.status(400).send('Bad Request').end();
   } catch (error) {
@@ -30,7 +34,6 @@ classifier.train();
     throw error;
   }
 })
-
 
 router.get('/lookup/:word', async (req: express.Request, res: express.Response) => {
   try {
@@ -64,4 +67,18 @@ function lookupWord(word: string): Promise<any[]> {
       }
     })
   })
+}
+
+
+function trainModel (req:express.Request, res: express.Response, next: express.NextFunction) {
+  const filePath = path.join(__dirname, '../../../data/prompt-templates.txt');
+  fs.readFile(filePath, 'utf-8', (err, data) => {
+    if (err) {
+      console.error('Error reading the file:', err);
+    }
+    const sentenceArr = data.split('\n');
+    markovChain.addStates(sentenceArr);
+    markovChain.train();
+  });
+  next();
 }

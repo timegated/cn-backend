@@ -34,3 +34,25 @@ router.get('/prompts', async (req: express.Request, res: express.Response) => {
     throw error;
   }
 })
+
+router.post('/new', async (req: express.Request, res: express.Response) => {
+  try {
+    const { topicid, type, prompttext, score } = req.query;
+    if (topicid && prompttext) {
+      const promptType = type === 'prompts' ? 'prompts' : 'roles';
+      const colName = type === 'prompts' ? 'prompttext' : 'roletext';
+      const query = `
+        INSERT INTO ${promptType} (${colName}, rating, topicid) VALUES (${String(prompttext)}, ${score ?? 0}, ${topicid})
+      `;
+
+      const success = await client.query(query);
+      res.status(201).send(success);
+      return;
+    } else {
+      res.status(400).send('Bad Request');
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+});

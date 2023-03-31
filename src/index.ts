@@ -10,7 +10,7 @@ import path from 'path';
 const swaggerDoc = YAML.load(path.join(__dirname, 'swagger.yaml'));
 
 
-const supabaseUrl = 'db.hnyhnbtdxhqmcvsgagxa.supabase.co';
+const supabaseUrl = process.env.SUPABASE_URL;
 const supabasePort = 5432;
 const supabaseDbName = 'postgres';
 const supabaseUser = 'postgres';
