@@ -1,6 +1,10 @@
 import express from 'express';
-import { promptResponseStream, promptResponseStreamChat } from '../../openai';
+import { promptResponse, promptResponseChat, promptResponseStream, promptResponseStreamChat } from '../../openai';
 import { streamOn } from '../../utils';
+import { Readable, Writable } from "stream";
+import fs from 'fs';
+import path from 'path';
+
 export const router = express.Router();
 
 
@@ -60,3 +64,52 @@ router.get('/chat', async (req: express.Request, res: express.Response) => {
     throw error;
   }
 })
+
+router.get('/sequence', async (req: express.Request, res: express.Response) => {
+  res.set({
+    'Cache-Control': 'no-cache',
+    'Content-Type': 'application/json',
+    'Transfer-Encoding': 'chunked'
+  });
+
+  const { prompt, modelChoice, maxTokens, numResponses, temperature, responseAs } = req.query;
+  const model = modelChoice ? String(modelChoice) : "gpt-3.5-turbo";
+  const maximumTokens = maxTokens ? Number(maxTokens) : 1000;
+  const num = numResponses ? Number(numResponses) : 1;
+  const temp = temperature ? Number(temperature) : 0.1;
+  const as = responseAs ? String(responseAs) : 'json';
+
+  const writable = new Writable({
+    write(chunk, encoding, next) {
+      res.write(chunk);
+      next();
+    }
+  });
+
+const filePath = path.join(__dirname, 'topic-prompts.txt');
+
+fs.access(filePath, fs.constants.F_OK, (err) => {
+    if (err) {
+      console.error(`Error reading file: ${err}`);
+      return;
+    }
+  
+    return fs.readFile(filePath, 'utf8', async(err, data) => {
+      if (err) {
+        console.error(`Error reading file: ${err}`);
+        return;
+      }
+  
+      const strings = data.split('\n\n');
+      for (let text of strings) {
+        const result = await promptResponseChat(text, model, maximumTokens, num, temp, as);
+        const readable = streamOn(result?.data, true);
+        readable.pipe(writable, { end: false });
+      }
+    
+      writable.on('finish', () => {
+        res.end();
+      });
+    });
+  });
+});

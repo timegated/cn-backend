@@ -1,5 +1,6 @@
 import { Configuration, OpenAIApi } from "openai";
 import { Readable } from 'stream';
+import { streamOn } from "./utils";
 
 require('dotenv').config()
 
@@ -56,6 +57,48 @@ export async function promptResponse(
   }
 }
 
+export async function promptResponseChat(
+  prompt: string,
+  model: string,
+  maxTokens: number,
+  numResponses: number,
+  temperature: number,
+  responseAs: string
+) {
+  try {
+    const res = await api.createChatCompletion(
+      {
+        model: model,
+        messages: [
+          {
+            role: 'system',
+            content: 'You are generating responses in sequence'
+          },
+          {
+          role: 'user',
+          content: `${prompt}`
+        }],
+        max_tokens: maxTokens,
+        n: 1,
+        stream: true,
+        presence_penalty: 1,
+        temperature: 0,
+        frequency_penalty: 1,
+      },
+      { responseType: 'stream' }
+    );
+    return res;
+  } catch (error: any) {
+    if (error.response) {
+      console.log(error.response.status);
+      console.log(error.response.data);
+    } else {
+      console.log(error.message);
+    }
+  }
+}
+
+/** STREAMS */
 export async function promptResponseStream(
   prompt: string,
   model: string,
@@ -72,9 +115,7 @@ export async function promptResponseStream(
       },
       { responseType: "stream" }
     );
-    const stream = Readable.from(res.data as any);
-
-    return stream;
+    return res.data;
   } catch (error: any) {
     if (error.response?.status) {
       error.response.data.on("data", (data: Buffer) => {
