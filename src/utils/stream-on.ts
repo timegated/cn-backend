@@ -9,7 +9,6 @@ const extractLines = (data: Buffer): string[] => {
 
 const parseStreamData = (chatCompletion: boolean, lines: string[]) => {
   for (const line of lines) {
-    console.log(line)
     const message = line.replace(/^data: /g, "");
     if (message === "[DONE]") {
       return; // Stream finished
@@ -32,7 +31,7 @@ export const streamOn = (result: any, chatCompletion: boolean) => {
       objectMode: false,
       transform(chunk, enc, cb) {
         const parseChunk = parseStreamData(chatCompletion, extractLines(chunk));
-        setTimeout(cb, 200, null, parseChunk)
+        setTimeout(cb, 50, null, parseChunk)
       },
     });
     return readable.pipe(delay);

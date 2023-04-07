@@ -1,4 +1,4 @@
-import { Configuration, OpenAIApi } from "openai";
+import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai";
 import { Readable } from 'stream';
 import { streamOn } from "./utils";
 
@@ -57,8 +57,13 @@ export async function promptResponse(
   }
 }
 
+interface Messages {
+  role: string;
+  content: string;
+}
+
 export async function promptResponseChat(
-  prompt: string,
+  msg: ChatCompletionRequestMessage | ChatCompletionRequestMessage[],
   model: string,
   maxTokens: number,
   numResponses: number,
@@ -69,15 +74,7 @@ export async function promptResponseChat(
     const res = await api.createChatCompletion(
       {
         model: model,
-        messages: [
-          {
-            role: 'system',
-            content: 'You are generating responses in sequence'
-          },
-          {
-          role: 'user',
-          content: `${prompt}`
-        }],
+        messages: Array.isArray(msg) ? msg : [msg],
         max_tokens: maxTokens,
         n: 1,
         stream: true,
