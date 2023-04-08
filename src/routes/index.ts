@@ -10,7 +10,7 @@ import * as jquery from './jquery';
 import * as files from './files';
 import * as fineTune from './fine-tune';
 import * as prompts from './prompts';
-import * as builder from './builder';
+// import * as builder from './builder';
 import * as user from './user';
 
 router.use('/answer', answers.router);
@@ -20,7 +20,7 @@ router.use('/jquery', jquery.router);
 router.use('/files', files.router);
 router.use('/fine-tune', fineTune.router);
 router.use('/topics', prompts.router);
-router.use('/builder', builder.router);
+// router.use('/builder', builder.router);
 router.use('/user', user.router);
 
 router.get('/', async (req: express.Request, res: express.Response) => {
