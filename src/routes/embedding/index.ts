@@ -5,6 +5,7 @@ import { client } from '../..';
 import { codeBlock, oneLine } from 'common-tags';
 import { streamOn } from '../../utils';
 import { ChatCompletionRequestMessage } from 'openai';
+import GPT3Tokenizer from "gpt3-tokenizer";
 
 export const router = express.Router();
 
@@ -75,41 +76,55 @@ router.get('/book-reviews', async (req: express.Request, res: express.Response) 
         return row.body !== '\r'
       });
 
-      console.log(queryResultFilter)
+
+      const tokenizer = new GPT3Tokenizer({type: 'gpt3'});
+      let tokenCount = 0;
       let contextText = '';
       for (let item of queryResultFilter) {
+        const content = item.body;
+        const encode = tokenizer.encode(content);
+        tokenCount += encode.text.length;
+
+        if (tokenCount >= 1500) {
+          break;
+        }
+
         contextText += `${item.body.trim()}\n--\n`;
       }
+
+      const context = contextText.split('\n--\n').map((ctx) => {
+        return {
+          role: 'user',
+          content: `Context: ${ctx}`
+        }
+      }) as ChatCompletionRequestMessage[];
 
       const promptMsgs = [
         {
           role: 'user',
-          content: 'You are a very enthusiastic book reviewer who loves to help people!',
+          content: `You are a very enthusiastic book reviewer who loves to help people!
+          Given the following sections from the a collection of book reviews answer the question using only that information`,
         },
         {
           role: 'user',
-          content: 'Given the following sections from the a collection of book reviews answer the question using only that information'
+          content: 'If you are unsure, say "Sorry, I don\'t know how to help with that.'
         },
         {
           role: 'user',
-          content: 'If you are unsure and the answer is not explicitly written in the book review, say "Sorry, I don\'t know how to help with that.'
+          content: `Context: ${contextText}`
         },
         {
           role: 'user',
-          content: contextText
-        },
-        {
-          role: 'user',
-          content: query
+          content: `Question: ${query}`
         }
       ] as ChatCompletionRequestMessage[];
-      console.log(promptMsgs);
+
+      const contextQuery = [...promptMsgs, ...context];
+  
+      console.log('Context Query', promptMsgs);
       const response = await promptResponseStreamChat(promptMsgs, "gpt-3.5-turbo", 2000)
       const stream = streamOn(response, true);
       stream.pipe(res);
-      // const response = await promptResponseChat(promptMsgs, "gpt-3.5-turbo", 4096, 1, 0.1, 'markdown')
-      //   const stream = streamOn(response?.data, true);
-      //   stream.pipe(res, {end: false});
     } else {
       res.status(400).send('Bad Request');
     }
