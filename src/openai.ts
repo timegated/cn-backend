@@ -57,11 +57,6 @@ export async function promptResponse(
   }
 }
 
-interface Messages {
-  role: string;
-  content: string;
-}
-
 export async function promptResponseChat(
   msg: ChatCompletionRequestMessage | ChatCompletionRequestMessage[],
   model: string,
@@ -84,6 +79,7 @@ export async function promptResponseChat(
       },
       { responseType: 'stream' }
     );
+    console.log(msg);
     return res;
   } catch (error: any) {
     if (error.response) {
@@ -132,18 +128,16 @@ export async function promptResponseStream(
 }
 
 export async function promptResponseStreamChat(
-  prompt: string,
+  msgs: ChatCompletionRequestMessage | ChatCompletionRequestMessage[],
   model: string,
-  maxTokens: number
+  maxTokens: number,
 ) {
   try {
+    // console.log(msgs);
     const res = await api.createChatCompletion(
       {
         model: model,
-        messages: [{
-          role: 'user',
-          content: `${prompt}`
-        }],
+        messages: msgs && Array.isArray(msgs) ? msgs : [msgs],
         max_tokens: maxTokens,
         n: 1,
         stream: true,
@@ -274,6 +268,22 @@ export async function retrieveFineTune(id: string) {
   try {
     const retrieve = await api.retrieveFineTune(id);
     return retrieve.data;
+  } catch (error: any) {
+    if (error.response) {
+      console.log(error.response.status);
+      console.log(error.response.data);
+    } else {
+      console.log(error.message);
+    }
+  }
+}
+
+/** EMBEDDINGS */
+export async function createEmbedding(input: string) {
+  try {
+    const createResponse = await api.createEmbedding({ model: "text-embedding-ada-002", input });
+
+    return createResponse.data.data;
   } catch (error: any) {
     if (error.response) {
       console.log(error.response.status);

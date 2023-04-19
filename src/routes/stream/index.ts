@@ -1,7 +1,6 @@
 import express from 'express';
-import { promptResponse, promptResponseChat, promptResponseStream, promptResponseStreamChat } from '../../openai';
+import { promptResponseChat, promptResponseStream, promptResponseStreamChat } from '../../openai';
 import { streamOn } from '../../utils';
-import { Readable, Writable } from "stream";
 import fs from 'fs';
 import path from 'path';
 import { ChatCompletionRequestMessage } from 'openai';
@@ -57,7 +56,7 @@ router.get('/chat', async (req: express.Request, res: express.Response) => {
     if (promptText.length + maximumTokens > 4096) {
       res.status(400).send("Max Tokens cannot exceed 4096")
     }
-    const result = await promptResponseStreamChat(promptText, model, maximumTokens);
+    const result = await promptResponseStreamChat([{role: 'user', content: promptText}], model, maximumTokens);
     const stream = streamOn(result, true);
     stream.pipe(res);
   } catch (error) {
@@ -74,7 +73,11 @@ router.get('/create-prompts', async (req, res) => {
     const num = numResponses ? Number(numResponses) : 1;
     const temp = temperature ? Number(temperature) : 0.1;
     const as = responseAs ? String(responseAs) : 'json';
-    const promptGenerator = `Generate exactly 10 sentences that start with the following list of words: create, rewrite, generate, suggest, design, construct, make, identify, calculate, convert, find, name, provide, summarize, classify, describe, edit, give, explain, and write. These questions must also contain the following list of words associated with each respectively in order: list, poem, sentence, story. phrase, paragraph, statement, sentence. question, story, sentence, list. title, strategy, idea, way. experiment, game, algorithm, logo. timeline, argument, query, sentence. prediction list. difference, theme, subject type. average, cost, sum. temperature text, sentence, number. synonym, number, area, word. element, benefit, country type. summary, solution, list, example. paragraph example. point, text, article. word, animal item. benefit, impact difference, process. text, sentence. description, example. meaning, difference. description, function sentence, story.
+    const promptGenerator = `Generate exactly 10 sentences that start with any of the following list of words: create, rewrite, generate, suggest, design, construct, make, identify, calculate, convert, find, name, provide, 
+    summarize, classify, describe, edit, give, explain, and write. These questions must also contain the following list of words associated with each respectively in order: 
+    list, poem, sentence, story. phrase, paragraph, statement, sentence. question, story, sentence, list. title, strategy, idea, way. experiment, game, algorithm, logo. timeline, argument, query, sentence. prediction list. 
+    difference, theme, subject type. average, cost, sum. temperature text, sentence, number. synonym, number, area, word. element, benefit, country type. summary, solution, list, example. paragraph example. point, text, 
+    article. word, animal item. benefit, impact difference, process. text, sentence. description, example. meaning, difference. description, function sentence, story.
     The sentences must start with create, rewrite, generate, suggest, design, construct, make, identify, calculate, convert, find, name, provide, summarize, classify, describe, edit, give, explain, and write.
     Get the sentences to pertain to the topic ${topic} and return as a list always. The list is unordered. I want only the text. I do not want the list ordered or labelled in any way.`
     const message = [
@@ -88,7 +91,7 @@ router.get('/create-prompts', async (req, res) => {
       },
       {
         role: 'user',
-        content: 'you will always return the response back as a list'
+        content: 'you will always return the response back as a list using a dash'
       },
       {
         role: 'user',
@@ -96,7 +99,7 @@ router.get('/create-prompts', async (req, res) => {
       },
       {
         role: 'user',
-        content: 'the list will always be bulleted in markdown format'
+        content: 'the list will always be returned as markdown'
       },
       {
         role: 'assistant',
@@ -105,7 +108,6 @@ router.get('/create-prompts', async (req, res) => {
     ] as ChatCompletionRequestMessage[]
     const responseFirst = await promptResponseChat(message, model, maximumTokens, num, temp, as)
     const readableFirst = streamOn(responseFirst?.data, true);
-    console.log(readableFirst);
     readableFirst.pipe(res, { end: false });
     
     readableFirst.on('end', () => {

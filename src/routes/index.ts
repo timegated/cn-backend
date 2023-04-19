@@ -12,6 +12,7 @@ import * as fineTune from './fine-tune';
 import * as prompts from './prompts';
 // import * as builder from './builder';
 import * as user from './user';
+import * as embedding from './embedding';
 
 router.use('/answer', answers.router);
 router.use('/stream', stream.router);
@@ -20,6 +21,7 @@ router.use('/jquery', jquery.router);
 router.use('/files', files.router);
 router.use('/fine-tune', fineTune.router);
 router.use('/topics', prompts.router);
+router.use('/embedding', embedding.router);
 // router.use('/builder', builder.router);
 router.use('/user', user.router);
 
