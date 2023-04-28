@@ -2,7 +2,6 @@ import * as express from 'express';
 import { createEmbedding, promptResponseChat, promptResponseStreamChat } from '../../openai';
 import { readFile } from 'fs-extra';
 import { client } from '../..';
-import { codeBlock, oneLine } from 'common-tags';
 import { streamOn } from '../../utils';
 import { ChatCompletionRequestMessage } from 'openai';
 import GPT3Tokenizer from "gpt3-tokenizer";
@@ -21,7 +20,8 @@ router.get('/create-embedding', async (req: express.Request, res: express.Respon
         dataToProcess.push(fC);
       }
     });
-    // Call createEmbedding for each file of the files that are processed
+
+    // Call createEmbedding for each paragraph of the files that are processed
     for (let i = 0; i <= dataToProcess.length; i++) {
       console.log(dataToProcess[i]);
       const embeddingResult = await createEmbedding(dataToProcess[i]);
@@ -80,6 +80,7 @@ router.get('/book-reviews', async (req: express.Request, res: express.Response) 
       const tokenizer = new GPT3Tokenizer({type: 'gpt3'});
       let tokenCount = 0;
       let contextText = '';
+
       for (let item of queryResultFilter) {
         const content = item.body;
         const encode = tokenizer.encode(content);
@@ -118,11 +119,9 @@ router.get('/book-reviews', async (req: express.Request, res: express.Response) 
           content: `Question: ${query}`
         }
       ] as ChatCompletionRequestMessage[];
-
-      const contextQuery = [...promptMsgs, ...context];
   
       console.log('Context Query', promptMsgs);
-      const response = await promptResponseStreamChat(promptMsgs, "gpt-3.5-turbo", 2000)
+      const response = await promptResponseStreamChat(promptMsgs, "gpt-4", 6000)
       const stream = streamOn(response, true);
       stream.pipe(res);
     } else {
