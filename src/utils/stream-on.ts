@@ -9,6 +9,7 @@ const extractLines = (data: Buffer): string[] => {
 
 const parseStreamData = (chatCompletion: boolean, lines: string[]) => {
   for (const line of lines) {
+    console.log(line)
     const message = line.replace(/^data: /g, "");
     if (message === "[DONE]") {
       return; // Stream finished
@@ -16,7 +17,9 @@ const parseStreamData = (chatCompletion: boolean, lines: string[]) => {
     try {
       const parsed = JSON.parse(message);
       const choices = parsed.choices.map((choice: any) => {
-        return chatCompletion ? choice.delta.content : choice.text;
+        console.log(choice);
+        const chatChoice = choice.delta.assistant ? choice.delta.assistant + choice.delta.content : choice.delta.content;
+        return chatCompletion ? chatChoice : choice.text;
       });
       return choices.join(' ');
     } catch (error) {

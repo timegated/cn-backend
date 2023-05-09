@@ -107,7 +107,7 @@ router.get('/create-prompts', async (req, res) => {
       },
     ] as ChatCompletionRequestMessage[]
     const responseFirst = await promptResponseChat(message, model, maximumTokens, num, temp, as)
-    const readableFirst = streamOn(responseFirst?.data, true);
+    const readableFirst = streamOn(responseFirst, true);
     readableFirst.pipe(res, { end: false });
     
     readableFirst.on('end', () => {
@@ -154,13 +154,13 @@ fs.access(filePath, fs.constants.F_OK, (err) => {
         messages.push({role: 'assistant', content: text});
       }
       const responseFirst = await promptResponseChat(messages[0], model, maximumTokens, num, temp, as)
-      const readableFirst = streamOn(responseFirst?.data, true);
+      const readableFirst = streamOn(responseFirst, true);
       console.log(readableFirst);
       readableFirst.pipe(res, { end: false });
       
       readableFirst.on('end', async (data: string) => {
         const responseSec = await promptResponseChat(messages[1], model, maximumTokens, num, temp, as);
-        const readableSecond = streamOn(responseSec?.data, true);
+        const readableSecond = streamOn(responseSec, true);
         readableSecond.pipe(res, {end: true});
       })
     });
