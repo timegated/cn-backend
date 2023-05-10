@@ -61,9 +61,9 @@ export async function promptResponseChat(
   msg: ChatCompletionRequestMessage | ChatCompletionRequestMessage[],
   model: string,
   maxTokens: number,
-  numResponses: number,
-  temperature: number,
-  responseAs: string
+  numResponses?: number,
+  temperature?: number,
+  responseAs?: string
 ) {
   try {
     const res = await api.createChatCompletion(
@@ -79,8 +79,8 @@ export async function promptResponseChat(
       },
       { responseType: 'stream' }
     );
-    console.log(msg);
-    return res;
+    console.log(res.data);
+    return res.data;
   } catch (error: any) {
     if (error.response) {
       console.log(error.response.status);
@@ -141,14 +141,10 @@ export async function promptResponseStreamChat(
         max_tokens: maxTokens,
         n: 1,
         stream: true,
-        presence_penalty: 1,
-        temperature: 0,
-        frequency_penalty: 1,
       },
       { responseType: 'stream' }
     );
-    const stream = Readable.from(res.data as any);
-    return stream;
+    return res.data;
   } catch (error: any) {
     if (error.response?.status) {
       error.response.data.on("data", (data: Buffer) => {

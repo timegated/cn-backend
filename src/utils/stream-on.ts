@@ -16,6 +16,7 @@ const parseStreamData = (chatCompletion: boolean, lines: string[]) => {
     try {
       const parsed = JSON.parse(message);
       const choices = parsed.choices.map((choice: any) => {
+        console.log(choice)
         return chatCompletion ? choice.delta.content : choice.text;
       });
       return choices.join(' ');
@@ -28,10 +29,10 @@ const parseStreamData = (chatCompletion: boolean, lines: string[]) => {
 export const streamOn = (result: any, chatCompletion: boolean) => {
     const readable = Readable.from(result, {objectMode: false});
     const delay = new Transform({
-      objectMode: false,
       transform(chunk, enc, cb) {
         const parseChunk = parseStreamData(chatCompletion, extractLines(chunk));
-        setTimeout(cb, 50, null, parseChunk)
+        console.log(parseChunk)
+        cb(null, parseChunk)
       },
     });
     return readable.pipe(delay);
