@@ -37,7 +37,7 @@ router.get('/create-embedding', async (req: express.Request, res: express.Respon
   }
 });
 
-router.get('/embedding-response', async (req: express.Request, res: express.Response) => {
+router.get('/book-reviews', async (req: express.Request, res: express.Response) => {
   try {
     const { query, match_threshold } = req.query;
     const queryText = query ? String(query).trim() : "";
@@ -61,7 +61,37 @@ router.get('/embedding-response', async (req: express.Request, res: express.Resp
   }
 })
 
-router.get('/book-reviews', async (req: express.Request, res: express.Response) => {
+router.get('/dev-docs', async (req: express.Request, res: express.Response) => {
+  try {
+    const { query, match_threshold } = req.query;
+    const queryText = query ? String(query).trim() : "";
+    const embeddingResult = await createEmbedding(queryText);
+    if (embeddingResult) {
+      const [{ embedding }] = embeddingResult;
+      const query = `SELECT body, 1 - (embedding <=> '[${embedding}]') as cosine_similiarity from doc_data WHERE 1 - (embedding <=> '[${embedding}]') > ${match_threshold ?? 0.78} LIMIT 10`;
+
+      const queryResult = await client.query(query);
+
+      const queryResultFilter = queryResult.rows.filter((row) => {
+        return row.body !== '\r'
+      });
+      res.status(200).send(queryResultFilter);
+      return;
+    } else {
+      res.status(400).send('Bad Request');
+    }
+  } catch (error) {
+    console.error(error);
+  }
+})
+
+router.get('/book-reviews-query', async (req: express.Request, res: express.Response) => {
+  res.set({
+    'Cache-Control': 'no-cache',
+    'Content-Type': 'application/json',
+    'Text-Encoding': 'chunk'
+  });
+
   try {
     const { query, match_threshold } = req.query;
     const queryText = query ? String(query).trim() : "";
@@ -132,7 +162,13 @@ router.get('/book-reviews', async (req: express.Request, res: express.Response) 
   }
 })
 
-router.get('/dev-docs', async (req: express.Request, res: express.Response) => {
+router.get('/dev-docs-query', async (req: express.Request, res: express.Response) => {
+  res.set({
+    'Cache-Control': 'no-cache',
+    'Content-Type': 'application/json',
+    'Text-Encoding': 'chunk'
+  });
+
   try {
     const { query, match_threshold } = req.query;
     const queryText = query ? String(query).trim() : "";
@@ -164,12 +200,6 @@ router.get('/dev-docs', async (req: express.Request, res: express.Response) => {
         contextText += `${item.body.trim()}\n--\n`;
       }
 
-      const context = contextText.split('\n--\n').map((ctx) => {
-        return {
-          role: 'user',
-          content: `Context: ${ctx}`
-        }
-      }) as ChatCompletionRequestMessage[];
       const prompt = `
       You are a very enthusiastic documentation subject matter expert who loves to help people!
       Given the following sections from the a collection of technical documentation about various programming concepts answer the question using only that information
@@ -200,16 +230,14 @@ router.get('/dev-docs', async (req: express.Request, res: express.Response) => {
       ] as ChatCompletionRequestMessage[];
       
       console.log('Context Query', prompt);
-      // const response = await promptResponseStreamChat(promptMsgs, "gpt-4", 6000);
-      const response = await promptResponseChat(promptMsgs, "gpt-4-0314", 6000);
-      
-      const stream = streamOn(response, false);
+      const response = await promptResponseStreamChat(promptMsgs, "gpt-4-0314", 6000);
+      const stream = streamOn(response, true);
       stream.pipe(res);
     } else {
       res.status(400).send('Bad Request');
     }
   } catch (error) {
-    // console.error(error);
+    console.error(error);
   }
 })
 

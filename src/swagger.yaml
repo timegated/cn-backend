@@ -208,3 +208,119 @@ paths:
             text/plain:
               schema:
                 type: string
+  /embedding/book-reviews:
+    get:
+      summary: Retrieves documents based on the provided query and match threshold
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+          description: The search query
+          required: true
+        - in: query
+          name: match_threshold
+          schema:
+            type: number
+            format: float
+          description: The match threshold
+      responses:
+        '200':
+          description: A JSON response of document data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    body:
+                      type: string
+                    cosine_similarity:
+                      type: number
+                      format: float
+        '400':
+          description: Bad Request
+  /embedding/dev-docs:
+    get:
+      summary: Retrieves documents based on the provided query and match threshold
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+          description: The search query
+          required: true
+        - in: query
+          name: match_threshold
+          schema:
+            type: number
+            format: float
+          description: The match threshold
+      responses:
+        '200':
+          description: A JSON response of document data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    body:
+                      type: string
+                    cosine_similarity:
+                      type: number
+                      format: float
+        '400':
+          description: Bad Request
+  /embedding/book-reviews-query:
+    get:
+      summary: Retrieves docs based on the provided query and match threshold
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+          description: The search query
+          required: true
+        - in: query
+          name: match_threshold
+          schema:
+            type: number
+            format: float
+          description: The match threshold
+      responses:
+        '200':
+          description: A streamed JSON response of docs data
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+  /embedding/dev-docs-query:
+    get:
+      summary: Retrieves docs based on the provided query and match threshold
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+          description: The search query
+          required: true
+        - in: query
+          name: match_threshold
+          schema:
+            type: number
+            format: float
+          description: The match threshold
+      responses:
+        '200':
+          description: A streamed JSON response of docs data
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad Request

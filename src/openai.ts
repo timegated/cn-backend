@@ -144,9 +144,7 @@ export async function promptResponseStreamChat(
       },
       { responseType: 'stream' }
     );
-    console.log(res);
-    const stream = Readable.from(res.data as any);
-    return stream;
+    return res.data;
   } catch (error: any) {
     if (error.response?.status) {
       error.response.data.on("data", (data: Buffer) => {
