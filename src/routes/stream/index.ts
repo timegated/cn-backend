@@ -27,8 +27,8 @@ router.get(
       if (promptText.length + maximumTokens > 4096) {
         res.status(400).send("Max Tokens cannot exceed 4096")
       }
-      const result = await promptResponseStream(promptText, model, maximumTokens);
-      const stream = streamOn(result, false);
+      const result = await promptResponseStreamChat([{role: "user", content: promptText}], model, maximumTokens);
+      const stream = streamOn(result, true);
       stream.pipe(res);
     } catch (error) {
       // Logging at some point
