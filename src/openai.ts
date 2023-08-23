@@ -1,6 +1,5 @@
 import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai";
-import { Readable } from 'stream';
-import { streamOn } from "./utils";
+
 
 require('dotenv').config()
 
