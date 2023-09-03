@@ -8,7 +8,7 @@ import {
 import { readFile } from "fs-extra";
 import { client } from "../..";
 import { streamOn } from "../../utils";
-import { ChatCompletionRequestMessage } from "openai";
+import Completion from "openai";
 import GPT3Tokenizer from "gpt3-tokenizer";
 
 export const router = express.Router();
@@ -149,7 +149,7 @@ router.get(
             role: "user",
             content: `Context: ${ctx}`,
           };
-        }) as ChatCompletionRequestMessage[];
+        }) as any[];
 
         const promptMsgs = [
           {
@@ -170,7 +170,7 @@ router.get(
             role: "user",
             content: `Question: ${query}`,
           },
-        ] as ChatCompletionRequestMessage[];
+        ] as any[];
 
         console.log("Context Query", promptMsgs);
         const response = await promptResponseStreamChat(
@@ -271,7 +271,7 @@ router.get(
             role: "user",
             content: `Question: ${query}`,
           },
-        ] as ChatCompletionRequestMessage[];
+        ] as any[];
 
         console.log("Context Query", promptMsgs);
         const response = await promptResponseStreamChat(

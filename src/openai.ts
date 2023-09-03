@@ -1,13 +1,10 @@
-import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai";
-
+import OpenAI from "openai";
 
 require('dotenv').config()
 
-const config = new Configuration({
-  apiKey: process.env.GPT_SECRET,
+export const api = new OpenAI({
+  apiKey: process.env.GPT_SECRET
 });
-
-export const api = new OpenAIApi(config);
 
 interface FineTuneParams {
   id: string;
@@ -35,15 +32,15 @@ export async function promptResponse(
   responseAs: string
 ) {
   try {
-    const completion = await api.createCompletion({
+    const completion = await api.completions.create({
       model: model,
       prompt: `${promptText}, return the response as ${responseAs}`,
       max_tokens: maxTokens,
       n: numResponses,
       temperature: temperature,
     });
-    if (numResponses === 1) return completion.data.choices[0].text;
-    return completion.data.choices.map((choice: any) => {
+    if (numResponses === 1) return completion.choices[0].text;
+    return completion.choices.map((choice: any) => {
       return choice.text;
     });
   } catch (error: any) {
@@ -57,7 +54,7 @@ export async function promptResponse(
 }
 
 export async function promptResponseChat(
-  msg: ChatCompletionRequestMessage | ChatCompletionRequestMessage[],
+  msg: any,
   model: string,
   maxTokens: number,
   numResponses?: number,
@@ -65,7 +62,7 @@ export async function promptResponseChat(
   responseAs?: string
 ) {
   try {
-    const res = await api.createChatCompletion(
+    const res = await api.chat.completions.create(
       {
         model: model,
         messages: Array.isArray(msg) ? msg : [msg],
@@ -75,11 +72,9 @@ export async function promptResponseChat(
         presence_penalty: 1,
         temperature: 0,
         frequency_penalty: 1,
-      },
-      { responseType: 'stream' }
+      }
     );
-    console.log(res.data);
-    return res.data;
+    return res;
   } catch (error: any) {
     if (error.response) {
       console.log(error.response.status);
@@ -97,7 +92,7 @@ export async function promptResponseStream(
   maxTokens: number
 ) {
   try {
-    const res = await api.createCompletion(
+    const res = await api.completions.create(
       {
         model: model,
         prompt: `${prompt}`,
@@ -105,9 +100,8 @@ export async function promptResponseStream(
         temperature: 0,
         stream: true,
       },
-      { responseType: "stream" }
     );
-    return res.data;
+    return res;
   } catch (error: any) {
     if (error.response?.status) {
       error.response.data.on("data", (data: Buffer) => {
@@ -127,13 +121,13 @@ export async function promptResponseStream(
 }
 
 export async function promptResponseStreamChat(
-  msgs: ChatCompletionRequestMessage | ChatCompletionRequestMessage[],
+  msgs: any,
   model: string,
   maxTokens: number,
 ) {
   try {
     // console.log(msgs);
-    const res = await api.createChatCompletion(
+    const res = await api.chat.completions.create(
       {
         model: model,
         messages: msgs && Array.isArray(msgs) ? msgs : [msgs],
@@ -141,9 +135,8 @@ export async function promptResponseStreamChat(
         n: 1,
         stream: true,
       },
-      { responseType: 'stream' }
     );
-    return res.data;
+    return res;
   } catch (error: any) {
     if (error.response?.status) {
       error.response.data.on("data", (data: Buffer) => {
@@ -166,7 +159,7 @@ export async function promptResponseStreamChat(
 /** ENGINES */
 export async function listEngines() {
   try {
-    const res = await api.listModels({
+    const res = await api.models.list({
       headers: {
         'Content-Type': 'application/json'
       }
@@ -188,8 +181,11 @@ export async function uploadFile(
   purpose: string,
 ) {
   try {
-    const createFile = await api.createFile(file, purpose);
-    return createFile.data;
+    const createFile = await api.files.create({
+      file,
+      purpose
+    });
+    return createFile;
   } catch (error: any) {
     if (error.response) {
       console.log(error.response.status);
@@ -202,7 +198,7 @@ export async function uploadFile(
 
 export async function listFiles() {
   try {
-    const listFiles = await api.listFiles();
+    const listFiles = await api.files.list();
     return listFiles.data;
   } catch (error: any) {
     if (error.response) {
@@ -216,8 +212,8 @@ export async function listFiles() {
 
 export async function singleFile(id: string) {
   try {
-    const singleFile = await api.retrieveFile(id);
-    return singleFile.data;
+    const singleFile = await api.files.retrieve(id);
+    return singleFile;
   } catch (error: any) {
     if (error.response) {
       console.log(error.response.status);
@@ -230,8 +226,8 @@ export async function singleFile(id: string) {
 
 export async function deleteFile(id: string) {
   try {
-    const deleteFile = await api.deleteFile(id);
-    return deleteFile.data;
+    const deleteFile = await api.files.del(id);
+    return deleteFile;
   } catch (error: any) {
     if (error.response) {
       console.log(error.response.status);
@@ -245,10 +241,10 @@ export async function deleteFile(id: string) {
 /** FINE TUNE */
 export async function createFinetune(params: FineTuneParams) {
   try {
-    const fineTune = await api.createFineTune({
+    const fineTune = await api.fineTunes.create({
       training_file: params.id,
     });
-    return fineTune.data;
+    return fineTune;
   } catch (error: any) {
     if (error.response) {
       console.log(error.response.status);
@@ -261,8 +257,8 @@ export async function createFinetune(params: FineTuneParams) {
 
 export async function retrieveFineTune(id: string) {
   try {
-    const retrieve = await api.retrieveFineTune(id);
-    return retrieve.data;
+    const retrieve = await api.fineTunes.retrieve(id);
+    return retrieve;
   } catch (error: any) {
     if (error.response) {
       console.log(error.response.status);
@@ -276,9 +272,9 @@ export async function retrieveFineTune(id: string) {
 /** EMBEDDINGS */
 export async function createEmbedding(input: string) {
   try {
-    const createResponse = await api.createEmbedding({ model: "text-embedding-ada-002", input });
+    const createResponse = await api.embeddings.create({ model: "text-embedding-ada-002", input });
 
-    return createResponse.data.data;
+    return createResponse.data;
   } catch (error: any) {
     if (error.response) {
       console.log(error.response.status);

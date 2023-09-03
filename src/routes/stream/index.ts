@@ -3,7 +3,6 @@ import { promptResponseChat, promptResponseStream, promptResponseStreamChat } fr
 import { streamOn } from '../../utils';
 import fs from 'fs';
 import path from 'path';
-import { ChatCompletionRequestMessage } from 'openai';
 
 export const router = express.Router();
 
@@ -105,7 +104,7 @@ router.get('/create-prompts', async (req, res) => {
         role: 'assistant',
         content: 'you will never apologize for being an AI'
       },
-    ] as ChatCompletionRequestMessage[]
+    ] as any[]
     const responseFirst = await promptResponseChat(message, model, maximumTokens, num, temp, as)
     const readableFirst = streamOn(responseFirst, true);
     readableFirst.pipe(res, { end: false });
@@ -149,7 +148,7 @@ fs.access(filePath, fs.constants.F_OK, (err) => {
       }
   
       const strings = data.split('\n\n');
-      const messages = [] as ChatCompletionRequestMessage[]
+      const messages = [] as any[]
       for (let text of strings) {
         messages.push({role: 'assistant', content: text});
       }

@@ -37,7 +37,7 @@ router.get("/", async (req: express.Request, res: express.Response) => {
 
     const maxTokens = Math.round(tokenLimit - template(selectKey, prompt).length / 2.5);
 
-    const jquery = await api.createCompletion({
+    const jquery = await api.completions.create({
       model: 'text-davinci-003',
       prompt: template(selectKey, prompt),
       n: 1,
@@ -51,8 +51,8 @@ router.get("/", async (req: express.Request, res: express.Response) => {
       const removeComment = /\/\/(.+)/;
       return response?.replace(removeComment, '').replace('()', '');
     }
-    fs.writeFileSync('./jquery.js', cleanText(jquery.data.choices[0].text) as string);
-    res.status(200).send(cleanText(jquery.data.choices[0].text));
+    fs.writeFileSync('./jquery.js', cleanText(jquery.choices[0].text) as string);
+    res.status(200).send(cleanText(jquery.choices[0].text));
   } catch (error: any) {
     if (error.response) {
       console.log(error.response.status);
