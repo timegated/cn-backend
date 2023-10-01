@@ -1,9 +1,7 @@
 import * as express from 'express';
 import { promptResponse } from '../../openai';
-import {Readable} from 'stream';
 
 export const router = express.Router();
-
 
 router.get("/", async (req: express.Request, res: express.Response) => {
   try {
@@ -23,9 +21,11 @@ router.get("/", async (req: express.Request, res: express.Response) => {
     }
     const result = await promptResponse(promptText, model, maximumTokens, num, temp, as);
     if (result) {
-      const streamResult = Readable.from(result)
-      streamResult.pipe(res).on('end', () => {
-        console.log('stream finished');
+      for await (const comp of result) {
+          res.write(comp.choices[0].text.replace(/^data: /g, '').replace(/\n/g, '').replace(/\"/, ''));
+      }
+      res.on("close", () => {
+        result.controller.abort();
       });
     } else {
       res.status(500).send('Something went wrong');

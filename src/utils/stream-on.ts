@@ -1,15 +1,13 @@
 import { Readable, Transform } from "stream";
 
-
-
-const extractLines = (data: Buffer): string[] => {
+export const extractLines = (data: Buffer): string[] => {
   return data
     .toString()
     .split("\n")
-    .filter((line: string) => line.trim() !== "");
+    .filter((line: string) => line);
 }
 
-const parseStreamData = (chatCompletion: boolean, lines: string[]) => {
+export const parseStreamData = (chatCompletion: boolean, lines: string[]) => {
   for (const line of lines) {
     const message = line.replace(/^data: /g, "");
     if (message === "[DONE]") {
@@ -30,10 +28,10 @@ const parseStreamData = (chatCompletion: boolean, lines: string[]) => {
 export const streamOn = (result: any, chatCompletion: boolean) => {
     const readable = Readable.from(result, {objectMode: false});
     const delay = new Transform({
-      objectMode: false,
       transform(chunk, enc, cb) {
         const parseChunk = parseStreamData(chatCompletion, extractLines(chunk));
-        setTimeout(cb, 50, null, parseChunk)
+        console.log(parseChunk)
+        cb(null, parseChunk)
       },
     });
     return readable.pipe(delay);
