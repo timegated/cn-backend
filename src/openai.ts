@@ -1,4 +1,6 @@
 import OpenAI from "openai";
+import { Completion } from "openai/resources";
+import { Stream } from "openai/streaming";
 
 require('dotenv').config()
 
@@ -38,11 +40,9 @@ export async function promptResponse(
       max_tokens: maxTokens,
       n: numResponses,
       temperature: temperature,
+      stream: true
     });
-    if (numResponses === 1) return completion.choices[0].text;
-    return completion.choices.map((choice: any) => {
-      return choice.text;
-    });
+    return completion;
   } catch (error: any) {
     if (error.response) {
       console.log(error.response.status);
@@ -92,14 +92,14 @@ export async function promptResponseStream(
   maxTokens: number
 ) {
   try {
-    const res = await api.completions.create(
+    const res:Stream<Completion> = await api.completions.create(
       {
         model: model,
         prompt: `${prompt}`,
         max_tokens: maxTokens,
         temperature: 0,
         stream: true,
-      },
+      }
     );
     return res;
   } catch (error: any) {
@@ -126,7 +126,6 @@ export async function promptResponseStreamChat(
   maxTokens: number,
 ) {
   try {
-    // console.log(msgs);
     const res = await api.chat.completions.create(
       {
         model: model,

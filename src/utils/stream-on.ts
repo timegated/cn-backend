@@ -1,13 +1,13 @@
 import { Readable, Transform } from "stream";
 
-const extractLines = (data: Buffer): string[] => {
+export const extractLines = (data: Buffer): string[] => {
   return data
     .toString()
     .split("\n")
     .filter((line: string) => line);
 }
 
-const parseStreamData = (chatCompletion: boolean, lines: string[]) => {
+export const parseStreamData = (chatCompletion: boolean, lines: string[]) => {
   for (const line of lines) {
     const message = line.replace(/^data: /g, "");
     if (message === "[DONE]") {
@@ -16,7 +16,6 @@ const parseStreamData = (chatCompletion: boolean, lines: string[]) => {
     try {
       const parsed = JSON.parse(message);
       const choices = parsed.choices.map((choice: any) => {
-        console.log(choice)
         return chatCompletion ? choice.delta.content : choice.text;
       });
       return choices.join(' ');

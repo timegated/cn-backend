@@ -10,8 +10,8 @@ router.get("/", async (req: express.Request, res: express.Response) => {
       res.status(200).json(engines);
       return;
     }
-    res.status(200).send('No Engines');
   } catch (error) {
     console.error(error);
+    res.status(500).send('Internal Server Error');
   }
 });

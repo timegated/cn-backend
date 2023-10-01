@@ -57,9 +57,8 @@ router.get(
       const embeddingResult = await createEmbedding(queryText);
       if (embeddingResult) {
         const [{ embedding }] = embeddingResult;
-        const query = `SELECT body, 1 - (embedding <=> '[${embedding}]') as cosine_similiarity from book_reviews WHERE 1 - (embedding <=> '[${embedding}]') > ${
-          match_threshold ?? 0.78
-        } LIMIT 10`;
+        const query = `SELECT body, 1 - (embedding <=> '[${embedding}]') as cosine_similiarity from book_reviews WHERE 1 - (embedding <=> '[${embedding}]') > ${match_threshold ?? 0.78
+          } LIMIT 10`;
 
         const queryResult = await client.query(query);
 
@@ -84,9 +83,8 @@ router.get("/dev-docs", async (req: express.Request, res: express.Response) => {
     const embeddingResult = await createEmbedding(queryText);
     if (embeddingResult) {
       const [{ embedding }] = embeddingResult;
-      const query = `SELECT body, 1 - (embedding <=> '[${embedding}]') as cosine_similiarity from doc_data WHERE 1 - (embedding <=> '[${embedding}]') > ${
-        match_threshold ?? 0.78
-      } LIMIT 20`;
+      const query = `SELECT body, 1 - (embedding <=> '[${embedding}]') as cosine_similiarity from doc_data WHERE 1 - (embedding <=> '[${embedding}]') > ${match_threshold ?? 0.78
+        } LIMIT 20`;
 
       const queryResult = await client.query(query);
 
@@ -118,9 +116,8 @@ router.get(
       const embeddingResult = await createEmbedding(queryText);
       if (embeddingResult) {
         const [{ embedding }] = embeddingResult;
-        const supabaseQuery = `SELECT body, 1 - (embedding <=> '[${embedding}]') as cosine_similiarity from book_reviews WHERE 1 - (embedding <=> '[${embedding}]') > ${
-          match_threshold ?? 0.78
-        } LIMIT 5`;
+        const supabaseQuery = `SELECT body, 1 - (embedding <=> '[${embedding}]') as cosine_similiarity from book_reviews WHERE 1 - (embedding <=> '[${embedding}]') > ${match_threshold ?? 0.78
+          } LIMIT 5`;
 
         const queryResult = await client.query(supabaseQuery);
 
@@ -178,8 +175,14 @@ router.get(
           "gpt-4",
           6000
         );
-        const stream = streamOn(response, true);
-        stream.pipe(res);
+        for await (const comp of response) {
+          if (comp.choices[0].delta.content) {
+            res.write(comp.choices[0].delta.content.replace(/^data: /g, '').replace(/\n/g, '').replace(/\"/, ''));
+          }
+        }
+        res.on("close", () => {
+          response.controller.abort();
+        });
       } else {
         res.status(400).send("Bad Request");
       }
@@ -206,12 +209,10 @@ router.get(
       const embeddingResult = await createEmbedding(queryText);
       if (embeddingResult) {
         const [{ embedding }] = embeddingResult;
-        const supabaseQuery = `SELECT body, 1 - (embedding <=> '[${embedding}]') as cosine_similiarity from doc_data WHERE 1 - (embedding <=> '[${embedding}]') > ${
-          match_threshold ?? 0.78
-        } ORDER BY cosine_similiarity LIMIT 50`;
-        const supabaseQueryLinks = `SELECT body, 1 - (embedding <=> '[${embedding}]') as cosine_similiarity from doc_links WHERE 1 - (embedding <=> '[${embedding}]') > ${
-          match_threshold ?? 0.78
-        } AND body like '%https://%' AND body like '%${queryLink}%' ORDER BY cosine_similiarity desc LIMIT 50`;
+        const supabaseQuery = `SELECT body, 1 - (embedding <=> '[${embedding}]') as cosine_similiarity from doc_data WHERE 1 - (embedding <=> '[${embedding}]') > ${match_threshold ?? 0.78
+          } ORDER BY cosine_similiarity LIMIT 50`;
+        const supabaseQueryLinks = `SELECT body, 1 - (embedding <=> '[${embedding}]') as cosine_similiarity from doc_links WHERE 1 - (embedding <=> '[${embedding}]') > ${match_threshold ?? 0.78
+          } AND body like '%https://%' AND body like '%${queryLink}%' ORDER BY cosine_similiarity desc LIMIT 50`;
 
         const queryResult = await client.query(supabaseQuery);
         const queryLinksResult = (await client.query(supabaseQueryLinks)).rows;
@@ -238,7 +239,6 @@ router.get(
         }
 
         let links = "";
-        let linkTokenCount = 0;
         queryLinksResult.slice(0, 10).forEach((link) => {
           links += `${link.body.trim()},`;
         });
@@ -271,16 +271,21 @@ router.get(
             role: "user",
             content: `Question: ${query}`,
           },
-        ] as any[];
+        ] as { role: string, content: string }[];
 
-        console.log("Context Query", promptMsgs);
         const response = await promptResponseStreamChat(
           promptMsgs,
           "gpt-4",
           6000
         );
-        const stream = streamOn(response, true);
-        stream.pipe(res);
+        for await (const comp of response) {
+          if (comp.choices[0].delta.content) {
+            res.write(comp.choices[0].delta.content.replace(/^data: /g, '').replace(/\n/g, '').replace(/\"/, ''));
+          }
+        }
+        res.on("close", () => {
+          response.controller.abort();
+        });
       } else {
         res.status(400).send("Bad Request");
       }
@@ -299,18 +304,16 @@ router.get(
     });
 
     try {
-      const { query, match_threshold, link} = req.query;
+      const { query, match_threshold, link } = req.query;
       const queryText = query ? String(query).trim() : "";
       const linkText = link ? String(link).trim() : "";
       const embeddingResult = await createEmbedding(queryText);
       if (embeddingResult) {
         const [{ embedding }] = embeddingResult;
-        const supabaseQuery = `SELECT body, 1 - (embedding <=> '[${embedding}]') as cosine_similiarity from doc_data WHERE 1 - (embedding <=> '[${embedding}]') > ${
-          0.78
-        } LIMIT 50`;
-        const supabaseQueryLinks = `SELECT body, 1 - (embedding <=> '[${embedding}]') as cosine_similiarity from doc_links WHERE 1 - (embedding <=> '[${embedding}]') > ${
-          match_threshold ?? 0.78
-        } AND body like '%https://%' AND body like '%${linkText}%' ORDER BY cosine_similiarity desc LIMIT 50`;
+        const supabaseQuery = `SELECT body, 1 - (embedding <=> '[${embedding}]') as cosine_similiarity from doc_data WHERE 1 - (embedding <=> '[${embedding}]') > ${0.78
+          } LIMIT 50`;
+        const supabaseQueryLinks = `SELECT body, 1 - (embedding <=> '[${embedding}]') as cosine_similiarity from doc_links WHERE 1 - (embedding <=> '[${embedding}]') > ${match_threshold ?? 0.78
+          } AND body like '%https://%' AND body like '%${linkText}%' ORDER BY cosine_similiarity desc LIMIT 50`;
 
         const queryResult = await client.query(supabaseQuery);
         const queryLinksResult = (await client.query(supabaseQueryLinks)).rows;
@@ -338,7 +341,7 @@ router.get(
         queryLinksResult.forEach((link) => {
           links.push(`${link.body.trim()},`);
         });
-        res.send({contextText, links});
+        res.send({ contextText, links });
       } else {
         res.status(400).send("Bad Request");
       }
