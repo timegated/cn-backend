@@ -28,8 +28,9 @@ router.get(
       }
       const result = await promptResponseStream(promptText, model, maximumTokens);
       for await (const comp of result) {
-        res.write(comp.choices[0].text.replace(/^data: /g, '').replace(/\n/g, '').replace(/\"/, ''));
+        res.write(`data: ${comp.choices[0].text.replace(/^data: /g, '').replace(/\n/g, '').replace(/\"/, '')}\n\n`);
       }
+      res.write("event: done\ndata: \n\n");
       res.on("close", () => {
         result.controller.abort();
       })
