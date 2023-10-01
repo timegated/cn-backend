@@ -31,6 +31,7 @@ router.get(
         res.write(`data: ${comp.choices[0].text.replace(/^data: /g, '').replace(/\n/g, '').replace(/\"/, '')}\n\n`);
       }
       res.write("event: done\ndata: \n\n");
+      res.end()
       res.on("close", () => {
         result.controller.abort();
       })
@@ -69,6 +70,7 @@ router.get('/chat', async (req: express.Request, res: express.Response) => {
       res.write(`data: ${text}\n\n`);
     }
     res.write("event: done\ndata: \n\n");
+    res.end();
     res.on("close", () => {
       result.controller.abort();
     })
@@ -132,6 +134,7 @@ router.get('/create-prompts', async (req, res) => {
         res.write(`data: ${text}\n\n`);
       }
       res.write("event: done\ndata: \n\n");
+      res.end();
       res.on("close", () => {
         result.controller.abort();
       })
