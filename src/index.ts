@@ -7,6 +7,7 @@ import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import path from 'path';
 
+
 const swaggerDoc = YAML.load(path.join(__dirname, 'swagger.yaml'));
 
 
