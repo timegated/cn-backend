@@ -9,13 +9,15 @@ export async function isAuthenticated(req: Request, res: Response, next: NextFun
     return res.status(401).json({ message: 'No token provided' });
   }
 
-  const { data, error } = await supabase.auth.api.getUser(token);
+  try {
+    // Depending on the version, this method may vary
+    const { data: session, error } = await supabase.auth.getUser(token);
 
-  if (error) {
-    return res.status(401).json({ message: 'Invalid token' });
+    if (error) throw error;
+
+    req.user = session.user;
+    next();
+  } catch (error: any) {
+    return res.status(401).json({ message: 'Invalid token', error: error.message });
   }
-
-  // Add the user info to the request object for downstream use
-  req.user = data;
-  next();
 }
