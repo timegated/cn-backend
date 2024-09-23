@@ -14,7 +14,7 @@ const swaggerDoc = YAML.load(path.join(__dirname, 'swagger.yaml'));
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabasePort = 5432;
 const supabaseDbName = 'postgres';
-const supabaseUser = 'postgres';
+const supabaseUser = 'postgres.hnyhnbtdxhqmcvsgagxa';
 const supabasePassword = process.env.SUPABASE_POSTGRES;
 
 export const client = new Client({

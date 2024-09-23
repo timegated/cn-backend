@@ -17,7 +17,7 @@ router.get(
     try {
       const { prompt, modelChoice, maxTokens } = req.query;
       const promptText = prompt ? String(prompt) : "";
-      const model = modelChoice ? String(modelChoice) : "text-davinci-003";
+      const model = modelChoice ? String(modelChoice) : "gpt-3.5-turbo";
       const maximumTokens = maxTokens ? Number(maxTokens) : 1000;
       if (!prompt && !maxTokens && Number(maxTokens) > 4096) {
         res.status(400).send("Prompt is required for request");

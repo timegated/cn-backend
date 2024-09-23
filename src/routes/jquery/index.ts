@@ -38,7 +38,7 @@ router.get("/", async (req: express.Request, res: express.Response) => {
     const maxTokens = Math.round(tokenLimit - template(selectKey, prompt).length / 2.5);
 
     const jquery = await api.completions.create({
-      model: 'text-davinci-003',
+      model: 'gpt-3.5-turbo',
       prompt: template(selectKey, prompt),
       n: 1,
       temperature: 0,

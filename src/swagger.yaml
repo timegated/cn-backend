@@ -19,7 +19,7 @@ paths:
           type: string
       - name: modelChoice
         in: query
-        description: The AI model choice (default is 'text-davinci-003').
+        description: The AI model choice (default is 'gpt-3.5-turbo').
         required: false
         schema:
           type: string
@@ -165,12 +165,12 @@ paths:
       summary: Get single file
       description: This route retrieves a single file based on the provided file ID.
       parameters:
-        - name: fileId
-          in: query
-          description: The ID of the file to be retrieved.
-          required: true
-          schema:
-            type: string
+      - name: fileId
+        in: query
+        description: The ID of the file to be retrieved.
+        required: true
+        schema:
+          type: string
       responses:
         '200':
           description: Successfully retrieved the file.
@@ -189,12 +189,12 @@ paths:
       summary: Delete a single file
       description: This route deletes a single file based on the provided file ID.
       parameters:
-        - name: id
-          in: path
-          description: The ID of the file to be deleted.
-          required: true
-          schema:
-            type: string
+      - name: id
+        in: path
+        description: The ID of the file to be deleted.
+        required: true
+        schema:
+          type: string
       responses:
         '200':
           description: Successfully deleted the file.
@@ -212,18 +212,18 @@ paths:
     get:
       summary: Retrieves documents based on the provided query and match threshold
       parameters:
-        - in: query
-          name: query
-          schema:
-            type: string
-          description: The search query
-          required: true
-        - in: query
-          name: match_threshold
-          schema:
-            type: number
-            format: float
-          description: The match threshold
+      - in: query
+        name: query
+        schema:
+          type: string
+        description: The search query
+        required: true
+      - in: query
+        name: match_threshold
+        schema:
+          type: number
+          format: float
+        description: The match threshold
       responses:
         '200':
           description: A JSON response of document data
@@ -245,18 +245,18 @@ paths:
     get:
       summary: Retrieves documents based on the provided query and match threshold
       parameters:
-        - in: query
-          name: query
-          schema:
-            type: string
-          description: The search query
-          required: true
-        - in: query
-          name: match_threshold
-          schema:
-            type: number
-            format: float
-          description: The match threshold
+      - in: query
+        name: query
+        schema:
+          type: string
+        description: The search query
+        required: true
+      - in: query
+        name: match_threshold
+        schema:
+          type: number
+          format: float
+        description: The match threshold
       responses:
         '200':
           description: A JSON response of document data
@@ -278,18 +278,18 @@ paths:
     get:
       summary: Retrieves docs based on the provided query and match threshold
       parameters:
-        - in: query
-          name: query
-          schema:
-            type: string
-          description: The search query
-          required: true
-        - in: query
-          name: match_threshold
-          schema:
-            type: number
-            format: float
-          description: The match threshold
+      - in: query
+        name: query
+        schema:
+          type: string
+        description: The search query
+        required: true
+      - in: query
+        name: match_threshold
+        schema:
+          type: number
+          format: float
+        description: The match threshold
       responses:
         '200':
           description: A streamed JSON response of docs data
@@ -303,18 +303,18 @@ paths:
     get:
       summary: Retrieves docs based on the provided query and match threshold
       parameters:
-        - in: query
-          name: query
-          schema:
-            type: string
-          description: The search query
-          required: true
-        - in: query
-          name: match_threshold
-          schema:
-            type: number
-            format: float
-          description: The match threshold
+      - in: query
+        name: query
+        schema:
+          type: string
+        description: The search query
+        required: true
+      - in: query
+        name: match_threshold
+        schema:
+          type: number
+          format: float
+        description: The match threshold
       responses:
         '200':
           description: A streamed JSON response of docs data

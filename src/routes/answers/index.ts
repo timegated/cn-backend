@@ -7,7 +7,7 @@ router.get("/", async (req: express.Request, res: express.Response) => {
   try {
     const { prompt, modelChoice, maxTokens, numResponses, temperature, responseAs } = req.query;
     const promptText = prompt ? String(prompt) : "";
-    const model = modelChoice ? String(modelChoice) : "text-davinci-003";
+    const model = modelChoice ? String(modelChoice) : "gpt-03-turbo";
     const maximumTokens = maxTokens ? Number(maxTokens) : 1000;
     const num = numResponses ? Number(numResponses) : 1;
     const temp = temperature ? Number(temperature) : 0.1;

@@ -3,7 +3,7 @@ import chatgpt from '../singleton/openai-instance';
 const getAnswer = () => {
   return chatgpt.createCompletion(
     {
-      model: "text-davinci-003",
+      model: "gpt-3.5-turbo",
       prompt: "Write a prompt to query a dom node",
       temperature: 0,
       n: 1,
