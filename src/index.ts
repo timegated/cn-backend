@@ -38,5 +38,5 @@ app.use('/', routes.router);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
 app.listen(PORT, () => {
-  console.log('OpenAI API server running');
+  console.log(`OpenAI API server running on Port:${PORT}`);
 })

@@ -6,32 +6,13 @@ info:
 servers:
 - url: /
 paths:
-  /stream:
+  /stream/create-prompts:
     get:
-      summary: Generates AI model response
-      description: This route generates an AI model response using the given prompt, model choice, and maximum tokens.
-      parameters:
-      - name: prompt
-        in: query
-        description: The prompt to generate the AI model response.
-        required: true
-        schema:
-          type: string
-      - name: modelChoice
-        in: query
-        description: The AI model choice (default is 'gpt-3.5-turbo').
-        required: false
-        schema:
-          type: string
-      - name: maxTokens
-        in: query
-        description: The maximum number of tokens for the generated response (default is 1000, cannot exceed 4096).
-        required: false
-        schema:
-          type: integer
+      summary: Generates prompts for use with a model
+      description: Generates a set of "synthetic" prompts
       responses:
         '200':
-          description: Successful generation of AI model response.
+          description: Successful generation of prompts.
           content:
             text/stream:
               schema:
