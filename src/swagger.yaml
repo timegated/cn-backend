@@ -10,6 +10,37 @@ paths:
     get:
       summary: Generates prompts for use with a model
       description: Generates a set of "synthetic" prompts
+      parameters:
+      - name: topic
+        in: query
+        description: The topic to generate the prompts.
+        required: true
+        schema:
+          type: string
+      - name: modelChoice
+        in: query
+        description: The chat model choice (default is 'gpt-3.5-turbo').
+        required: false
+        schema:
+          type: string
+      - name: maxTokens
+        in: query
+        description: The maximum number of tokens for the generated response (default is 1000, cannot exceed 4096).
+        required: false
+        schema:
+          type: integer
+      - name: numResponses
+        in: query
+        description: Number of prompts returned
+        required: false
+        schema:
+          type: integer
+      - name: responseAs
+        in: query
+        description: Format of the returned response.
+        required: false
+        schema:
+          type: integer
       responses:
         '200':
           description: Successful generation of prompts.
