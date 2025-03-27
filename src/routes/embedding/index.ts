@@ -173,7 +173,6 @@ router.get(
         const response = await promptResponseStreamChat(
           promptMsgs,
           "gpt-4",
-          6000
         );
         for await (const comp of response) {
           if (comp.choices[0].delta.content) {
@@ -276,7 +275,6 @@ router.get(
         const response = await promptResponseStreamChat(
           promptMsgs,
           "gpt-4",
-          6000
         );
         for await (const comp of response) {
           if (comp.choices[0].delta.content) {

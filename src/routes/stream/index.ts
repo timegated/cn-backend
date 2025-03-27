@@ -26,7 +26,7 @@ router.get(
       if (promptText.length + maximumTokens > 4096) {
         res.status(400).send("Max Tokens cannot exceed 4096")
       }
-      const result = await promptResponseStream(promptText, model, maximumTokens);
+      const result = await promptResponseStream(promptText, model);
       for await (const comp of result) {
         res.write(`data: ${comp.choices[0].text.replace(/^data: /g, '').replace(/\n/g, '').replace(/\"/, '')}\n\n`);
       }
@@ -63,7 +63,7 @@ router.get('/chat', async (req: express.Request, res: express.Response) => {
     if (promptText.length + maximumTokens > 4096) {
       res.status(400).send("Max Tokens cannot exceed 4096")
     }
-    const result = await promptResponseStreamChat([{ role: 'user', content: promptText }], model, maximumTokens);
+    const result = await promptResponseStreamChat([{ role: 'user', content: promptText }], model);
     for await (const comp of result) {
       const { choices } = comp;
       const text = (choices[0].delta.content ? choices[0].delta.content : "").replace(/^data: /g, '').replace(/\n/g, '').replace(/\"/, '')
@@ -126,7 +126,7 @@ router.get('/create-prompts', async (req, res) => {
         content: 'you will never apologize for being an AI'
       },
     ] as { role: string, content: string }[]
-    const result = await promptResponseChat(message, model, maximumTokens, num, temp, as)
+    const result = await promptResponseChat(message, model)
     if (result) {
       for await (const comp of result) {
         const { choices } = comp;
@@ -178,7 +178,7 @@ router.get('/sequence', async (req: express.Request, res: express.Response) => {
       for (let text of strings) {
         messages.push({ role: 'assistant', content: text });
       }
-      const result = await promptResponseChat(messages[0], model, maximumTokens, num, temp, as)
+      const result = await promptResponseChat(messages[0], model)
       if (result) {
         for await (const comp of result) {
           if (comp.choices[0].delta.content) {
@@ -187,7 +187,7 @@ router.get('/sequence', async (req: express.Request, res: express.Response) => {
         }
         res.on("close", async () => {
           result.controller.abort();
-          const responseSec = await promptResponseChat(messages[1], model, maximumTokens, num, temp, as);
+          const responseSec = await promptResponseChat(messages[1], model);
           if (responseSec) {
             for await (const comp of responseSec) {
               if (comp.choices[0].delta.content) {

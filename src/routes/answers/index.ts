@@ -19,7 +19,7 @@ router.get("/", async (req: express.Request, res: express.Response) => {
     if (promptText.length + maximumTokens > 4096) {
       res.status(400).send("Max Tokens cannot exceed 4096")
     }
-    const result = await promptResponse(promptText, model, maximumTokens, num, temp, as);
+    const result = await promptResponse(promptText, model, num, temp, as);
     if (result) {
       for await (const comp of result) {
           res.write(comp.choices[0].text.replace(/^data: /g, '').replace(/\n/g, '').replace(/\"/, ''));
