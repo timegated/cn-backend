@@ -28,7 +28,6 @@ interface FineTuneParams {
 export async function promptResponse(
   promptText: string,
   model: string,
-  maxTokens: number,
   numResponses: number,
   temperature: number,
   responseAs: string
@@ -37,7 +36,6 @@ export async function promptResponse(
     const completion = await api.completions.create({
       model: model,
       prompt: `${promptText}, return the response as ${responseAs}`,
-      max_tokens: maxTokens,
       n: numResponses,
       temperature: temperature,
       stream: true
@@ -56,17 +54,12 @@ export async function promptResponse(
 export async function promptResponseChat(
   msg: any,
   model: string,
-  maxTokens: number,
-  numResponses?: number,
-  temperature?: number,
-  responseAs?: string
 ) {
   try {
     const res = await api.chat.completions.create(
       {
         model: model,
         messages: Array.isArray(msg) ? msg : [msg],
-        max_tokens: maxTokens,
         n: 1,
         stream: true,
         presence_penalty: 1,
@@ -89,14 +82,12 @@ export async function promptResponseChat(
 export async function promptResponseStream(
   prompt: string,
   model: string,
-  maxTokens: number
 ) {
   try {
     const res:Stream<Completion> = await api.completions.create(
       {
         model: model,
         prompt: `${prompt}`,
-        max_tokens: maxTokens,
         temperature: 0,
         stream: true,
       }
@@ -123,14 +114,12 @@ export async function promptResponseStream(
 export async function promptResponseStreamChat(
   msgs: any,
   model: string,
-  maxTokens: number,
 ) {
   try {
     const res = await api.chat.completions.create(
       {
         model: model,
         messages: msgs && Array.isArray(msgs) ? msgs : [msgs],
-        max_tokens: maxTokens,
         n: 1,
         stream: true,
       },
